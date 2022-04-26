@@ -50,9 +50,8 @@ def gate_closed():
 def show_ms(display: DigitDisplay, ms: int):
     seconds = ms//1000
     millis = ms % 1000
-    minutes = seconds // 60
 
-    txt = "%1d.%0.2d %0.3d" % (minutes, seconds, millis)
+    txt = "%.3d.%0.3d" % (seconds, millis)
     display.write(txt)
 
 
@@ -60,7 +59,7 @@ class Ready(State):
     async def enter(self):
         GREEN_LED.on()
         RED_LED.off()
-        self.machine.display.write("0.00 000")
+        show_ms(self.machine.display, 0)
 
     async def tick(self):
         if gate_closed():
@@ -139,6 +138,11 @@ class EndTime(State):
         RED_LED.off()
         GREEN_LED.off()
         show_ms(self.machine.display, time.ticks_diff(self.end_ms, self.start_ms))
+
+    async def tick(self):
+        curr_ms = time.ticks_ms()
+        if time.ticks_diff(curr_ms, self.end_ms) > 60_000:
+            return Ready()
 
 
 async def main():
