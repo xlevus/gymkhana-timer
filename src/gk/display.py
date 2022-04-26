@@ -153,8 +153,6 @@ class DigitDisplay:
             self._write_register(8 - i, symbol)
             text += char
 
-        logging.log(logging.INFO, text)
-
     async def main(self):
         if self.lock.locked():
             return

@@ -6,7 +6,7 @@ from gk import logging
 from gk.display import DigitDisplay
 from gk.fsm import StateMachine, State
 
-spi = SPI(1, baudrate=50000)
+spi = SPI(1, baudrate=1_000_000)
 
 display = DigitDisplay(
     spi,
@@ -64,8 +64,8 @@ class TriggeredWait(State):
 
     async def tick(self):
         curr_ms = time.ticks_ms()
-        if time.ticks_diff(curr_ms, self.start_ms) < 500:
-            print(LDR_ADC.read_u16())
+
+        if  time.ticks_diff(curr_ms, self.start_ms) < 500:
             if gate_closed():
                 pass
             else:
@@ -85,6 +85,11 @@ class Timing(State):
 
     async def tick(self):
         curr_ms = time.ticks_ms()
+
+        if curr_ms % 51 == 0:
+            await self.update_display(curr_ms)
+
+    async def update_display(self, curr_ms):
         delta = time.ticks_diff(curr_ms, self.start_ms)
 
         seconds = delta//1000
