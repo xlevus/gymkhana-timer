@@ -51,7 +51,7 @@ def show_ms(display: DigitDisplay, ms: int):
     seconds = ms//1000
     millis = ms % 1000
 
-    txt = "%.3d.%0.3d" % (seconds, millis)
+    txt = "%3d.%0.3d" % (seconds, millis)
     display.write(txt)
 
 
