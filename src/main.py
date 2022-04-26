@@ -47,6 +47,15 @@ def gate_closed():
     return val < LDR_CLOSED_TH
 
 
+def show_ms(display: DigitDisplay, ms: int):
+    seconds = ms//1000
+    millis = ms % 1000
+    minutes = seconds // 60
+
+    txt = "%1d.%0.2d %0.3d" % (minutes, seconds, millis)
+    display.write(txt)
+
+
 class Ready(State):
     async def enter(self):
         GREEN_LED.on()
@@ -61,6 +70,10 @@ class Ready(State):
 class TriggeredWait(State):
     def __init__(self, start_ms):
         self.start_ms = start_ms
+
+    async def enter(self):
+        GREEN_LED.on()
+        RED_LED.on()
 
     async def tick(self):
         curr_ms = time.ticks_ms()
@@ -83,21 +96,49 @@ class Timing(State):
         RED_LED.on()
         GREEN_LED.off()
 
+    async def tick(self, curr_ms=None):
+        curr_ms = curr_ms or time.ticks_ms()
+
+
+        if gate_closed() and time.ticks_diff(curr_ms, self.start_ms) > 5000:
+            return TimingEnd(self.start_ms, curr_ms)
+
+        if curr_ms % 91 == 0:
+            delta = time.ticks_diff(curr_ms, self.start_ms)
+            show_ms(self.machine.display, delta)
+
+
+class TimingEnd(State):
+    def __init__(self, start_ms, end_ms):
+        self.start_ms = start_ms
+        self.end_ms = end_ms
+
+    async def enter(self):
+        RED_LED.on()
+        GREEN_LED.on()
+
     async def tick(self):
         curr_ms = time.ticks_ms()
 
-        if curr_ms % 51 == 0:
-            await self.update_display(curr_ms)
+        if  time.ticks_diff(curr_ms, self.end_ms) < 500:
+            if gate_closed():
+                pass
+            else:
+                return EndTime(self.start_ms, self.end_ms)
 
-    async def update_display(self, curr_ms):
-        delta = time.ticks_diff(curr_ms, self.start_ms)
+        else:
+            return Timing(self.start_ms)
 
-        seconds = delta//1000
-        ms = delta % 1000
-        minutes = seconds // 60
 
-        txt = "%1d.%0.2d %0.3d" % (minutes, seconds, ms)
-        self.machine.display.write(txt)
+class EndTime(State):
+    def __init__(self, start_ms, end_ms):
+        self.start_ms = start_ms
+        self.end_ms = end_ms
+
+    async def enter(self):
+        RED_LED.off()
+        GREEN_LED.off()
+        show_ms(self.machine.display, time.ticks_diff(self.end_ms, self.start_ms))
 
 
 async def main():
