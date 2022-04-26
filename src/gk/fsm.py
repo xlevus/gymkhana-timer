@@ -9,22 +9,28 @@ class StateMachine:
     def __getattr__(self, key):
         return self.globals[key]
 
-    async def change(self, next_state_cls, *args):
+    async def change(self, next_state):
         if self.state is not None:
-            log(INFO, f"Exiting state {self.state.__class__}")
+            log(INFO, f"Exiting state {self.state}")
             await self.state.exit()
 
-        self.state = next_state_cls(self, *args)
-        log(INFO, f"Entering state {self.state.__class__}")
+        next_state.init(self)
+        self.state = next_state
+        log(INFO, f"Entering state {self.state}")
         await self.state.enter()
 
     async def tick(self):
-        await self.state.tick()
+        next = await self.state.tick()
+        if next is not None:
+            await self.change(next)
 
 
 class State:
-    def __init__(self, machine: StateMachine, *args):
+    def init(self, machine: StateMachine) -> None:
         self.machine = machine
+
+    def __repr__(self):
+        return self.__class__.__name__
 
     async def enter(self):
         pass

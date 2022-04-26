@@ -1,4 +1,5 @@
 import uasyncio
+import time
 from machine import Pin, SPI, ADC, Timer
 
 from gk import logging
@@ -12,9 +13,13 @@ display = DigitDisplay(
     Pin(32, Pin.OUT),
 )
 
-LDR = Pin(35)
+LDR = Pin(35, Pin.IN)
+LDR_ADC = ADC(LDR)
+LDR_CLOSED_TH = 10000
+
 GREEN_LED = Pin(22, Pin.OUT)
 RED_LED = Pin(23, Pin.OUT)
+
 
 logging.enable()
 
@@ -31,20 +36,63 @@ class Init(State):
         display.write('coneheads')
         await uasyncio.sleep(5)
 
-        await self.machine.change(Ready)
+        await self.machine.change(Ready())
 
     async def tick(self):
         pass
+
+
+def gate_closed():
+    val = LDR_ADC.read_u16()
+    return val < LDR_CLOSED_TH
 
 
 class Ready(State):
     async def enter(self):
         GREEN_LED.on()
         RED_LED.off()
-        self.machine.display.write("rdy...")
+        self.machine.display.write("0.00 000")
 
     async def tick(self):
-        pass
+        if gate_closed():
+            return TriggeredWait(time.ticks_ms())
+
+
+class TriggeredWait(State):
+    def __init__(self, start_ms):
+        self.start_ms = start_ms
+
+    async def tick(self):
+        curr_ms = time.ticks_ms()
+        if time.ticks_diff(curr_ms, self.start_ms) < 500:
+            print(LDR_ADC.read_u16())
+            if gate_closed():
+                pass
+            else:
+                return Ready()
+
+        else:
+            return Timing(self.start_ms)
+
+
+class Timing(State):
+    def __init__(self, start_ms):
+        self.start_ms = start_ms
+
+    async def enter(self):
+        RED_LED.on()
+        GREEN_LED.off()
+
+    async def tick(self):
+        curr_ms = time.ticks_ms()
+        delta = time.ticks_diff(curr_ms, self.start_ms)
+
+        seconds = delta//1000
+        ms = delta % 1000
+        minutes = seconds // 60
+
+        txt = "%1d.%0.2d %0.3d" % (minutes, seconds, ms)
+        self.machine.display.write(txt)
 
 
 async def main():
@@ -57,11 +105,10 @@ async def main():
             display=display,
         )
 
-        await machine.change(Init)
+        await machine.change(Init())
 
         while True:
             await machine.tick()
-            await uasyncio.sleep_ms(1)
 
     finally:
         for task in tasks:

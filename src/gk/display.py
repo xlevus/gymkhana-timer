@@ -133,6 +133,7 @@ class DigitDisplay:
             self._write_register(i + 1, 0)
 
     def write(self, text):
+        logging.log(logging.DEBUG, text)
         self.pointer = 0
         if len(text) > SIZE:
             self.text = text + " " * LONG_PAD
