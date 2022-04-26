@@ -133,9 +133,9 @@ class DigitDisplay:
             self._write_register(i + 1, 0)
 
     def write(self, text):
+        self.pointer = 0
         if len(text) > SIZE:
             self.text = text + " " * LONG_PAD
-            self.pointer = 0
             self.scroll = True
         else:
             self.text = '{:<8}'.format(text)
@@ -166,6 +166,6 @@ class DigitDisplay:
                     self.update()
                     self.pointer += 1
 
-                await uasyncio.sleep(1)
+                await uasyncio.sleep(0.5)
         finally:
             self.lock.release()
