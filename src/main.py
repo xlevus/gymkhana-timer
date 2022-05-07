@@ -6,7 +6,7 @@ from gk import logging
 from gk.display import DigitDisplay
 from gk.fsm import StateMachine, State
 
-spi = SPI(1, baudrate=1_000_000)
+spi = SPI(1, baudrate=10_000)
 
 display = DigitDisplay(
     spi,
@@ -102,7 +102,7 @@ class Timing(State):
         if gate_closed() and time.ticks_diff(curr_ms, self.start_ms) > 5000:
             return TimingEnd(self.start_ms, curr_ms)
 
-        if curr_ms % 91 == 0:
+        if curr_ms % 123 == 0:
             delta = time.ticks_diff(curr_ms, self.start_ms)
             show_ms(self.machine.display, delta)
 
