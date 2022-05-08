@@ -1,0 +1,27 @@
+[GLOBAL]
+pants_version = "2.11.0"
+
+backend_packages = [
+    "pants.backend.python",
+    "pants.backend.python.lint.black",
+    "pants.backend.python.lint.isort",
+    "pants.backend.python.lint.flake8",
+    "pants.backend.python.typecheck.mypy",
+]
+
+root_patterns = [
+    "/src/python",
+    "/src/micropython",
+]
+
+[flake8]
+config = "build-support/flake8"
+
+[isort]
+config = "build-support/pyproject.toml"
+
+[black]
+config = "build-support/pyproject.toml"
+
+[anonymous-telemetry]
+enabled = false
