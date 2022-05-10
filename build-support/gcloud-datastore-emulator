@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+SCRIPTPATH="$(dirname "$0")"
+DATAPATH="${SCRIPTPATH}/../.datastore"
+mkdir -p "${DATAPATH}"
+
+exec gcloud beta emulators datastore start \
+    --host-port=localhost:8081 \
+    --consistency=1.0 \
+    --data-dir="${DATAPATH}"

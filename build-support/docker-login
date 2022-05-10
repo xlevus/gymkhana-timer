@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+HOSTNAME_LIST="australia-southeast1-docker.pkg.dev"
+
+gcloud auth configure-docker $HOSTNAME_LIST
