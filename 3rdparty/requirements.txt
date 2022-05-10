@@ -1,0 +1,4 @@
+flask
+pydantic
+google-cloud-datastore
+setuptools
