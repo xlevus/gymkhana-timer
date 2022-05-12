@@ -1,0 +1,5 @@
+google-cloud-datastore
+setuptools
+django
+django-gcloud-connectors
+gunicorn

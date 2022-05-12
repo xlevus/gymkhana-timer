@@ -2,6 +2,7 @@
 pants_version = "2.11.0"
 
 backend_packages = [
+    "pants.backend.docker",
     "pants.backend.python",
     "pants.backend.python.lint.black",
     "pants.backend.python.lint.isort",
@@ -9,6 +10,7 @@ backend_packages = [
     "pants.backend.python.typecheck.mypy",
 ]
 
+[source]
 root_patterns = [
     "/src/python",
     "/src/micropython",
@@ -25,3 +27,21 @@ config = "build-support/pyproject.toml"
 
 [anonymous-telemetry]
 enabled = false
+
+[python]
+enable_resolves = true
+lockfile_generator = "pex"
+interpreter_constraints = ["CPython==3.10.*"]
+
+[python-infer]
+string_imports = true
+
+
+[docker.registries.coneheads-gcloud]
+address = "australia-southeast1-docker.pkg.dev/coneheads-wgtn/gymkhana"
+default = true
+
+[docker]
+env_vars = [
+    "DOCKER_HOST",
+]
