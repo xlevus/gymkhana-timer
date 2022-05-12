@@ -71,15 +71,10 @@ TEMPLATES = [
 WSGI_APPLICATION = 'gk.django.wsgi.application'
 
 
-# Database
-# https://docs.djangoproject.com/en/3.2/ref/settings/#databases
-import gcloudc.db.backends.datastore
-import google.cloud.datastore
 DATABASES = {
     'default': {
-        'ENGINE': 'gcloudc.db.backends.datastore',
-        'PROJECT': 'test',
-        'INDEXES_FILE': BASE_DIR / "web/indexes.yaml",
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': '.data/db.sqlite',
     }
 }
 

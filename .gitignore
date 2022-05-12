@@ -3,3 +3,5 @@
 /.pids
 
 secrets
+
+.data/
