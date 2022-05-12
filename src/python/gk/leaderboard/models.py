@@ -33,3 +33,10 @@ class Time(models.Model):
             self.group_id = f"__R{self.rider}"
 
         super().save(*args, **kwargs)
+
+    @property
+    def time(self) -> str:
+        millis = self.time_ms % 1000
+        seconds = (self.time_ms // 1000) % 60
+        minutes = self.time_ms // (1000 * 60)
+        return f"{minutes:02}:{seconds:.0f}.{millis:03}"
