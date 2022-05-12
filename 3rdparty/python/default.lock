@@ -10,6 +10,7 @@
 //   ],
 //   "generated_with_requirements": [
 //     "django",
+//     "django-pivot",
 //     "gunicorn"
 //   ]
 // }
@@ -71,6 +72,26 @@
           ],
           "requires_python": ">=3.8",
           "version": "4.0.4"
+        },
+        {
+          "artifacts": [
+            {
+              "algorithm": "sha256",
+              "hash": "1c60e18e7d5f7e42856faee0961748082ddd05b01ae7c8a4baed64d2bbacd051",
+              "url": "https://files.pythonhosted.org/packages/6d/4f/7e4c34c50885204985248bdaa343ef22ad0cfff2b4f8d0bfc08c1abf651f/django_pivot-1.9.0-py3-none-any.whl"
+            },
+            {
+              "algorithm": "sha256",
+              "hash": "5e985d32d9ff2a6b89419dd0292c0fa2822d494ee479b5fd16cdb542abf66a88",
+              "url": "https://files.pythonhosted.org/packages/f9/15/1a4b1c781b566a49b4d1083fc76ca3ea6a75ec24894710590f67b32ab36d/django-pivot-1.9.0.tar.gz"
+            }
+          ],
+          "project_name": "django-pivot",
+          "requires_dists": [
+            "django>=2.2.0"
+          ],
+          "requires_python": null,
+          "version": "1.9"
         },
         {
           "artifacts": [
@@ -204,6 +225,7 @@
   "prefer_older_binary": false,
   "requirements": [
     "django",
+    "django-pivot",
     "gunicorn"
   ],
   "requires_python": [
