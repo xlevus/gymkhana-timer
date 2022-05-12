@@ -1,8 +1,8 @@
-file(name="indexes", source="indexes.yaml")
-
 python_sources(
     name="src",
-    dependencies=[":indexes"],
+    dependencies=[
+        "src/python/gk/leaderboard",
+    ],
 )
 
 pex_binary(
@@ -11,6 +11,7 @@ pex_binary(
     dependencies=[":src"],
     restartable=True,
 )
+
 pex_binary(
     name="gunicorn",
     entry_point="gunicorn.py",
