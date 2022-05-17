@@ -1,0 +1,48 @@
+[GLOBAL]
+pants_version = "2.11.0"
+
+backend_packages = [
+    "pants.backend.docker",
+    "pants.backend.python",
+    "pants.backend.python.lint.black",
+    "pants.backend.python.lint.isort",
+    "pants.backend.python.lint.flake8",
+    "pants.backend.python.typecheck.mypy",
+    "pants.backend.shell",
+]
+
+[source]
+root_patterns = [
+    "/src/python",
+    "/src/micropython",
+]
+
+[flake8]
+config = "build-support/flake8"
+
+[isort]
+config = "build-support/pyproject.toml"
+
+[black]
+config = "build-support/pyproject.toml"
+
+[anonymous-telemetry]
+enabled = false
+
+[python]
+enable_resolves = true
+lockfile_generator = "pex"
+interpreter_constraints = ["CPython==3.10.*"]
+
+[python-infer]
+string_imports = true
+
+
+[docker.registries.gk]
+address = "gk"
+default = true
+
+[docker]
+env_vars = [
+    "DOCKER_HOST",
+]

@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block main %}
+{% for course, times in courses %}
+
+{% if times %}
+<h2>{{ course }}</h2>
+<table class="table table-striped table-sm mb-5">
+    <thead>
+        <td></td>
+        <td>Rider</td>
+        <td>Bike</td>
+        <td>Time</td>
+    </thead>
+
+    {% for time in times %}
+    <tr>
+        <td>#{{ forloop.counter }}</td>
+        <td>
+            {% if time.user %}
+            {{ time.user.username }}
+            {% else %}
+            {{ time.rider }}
+            {% endif %}
+        </td>
+        <td>{{ time.bike }}</td>
+        <td>{{ time.time }}</td>
+    </tr>
+    {% endfor %}
+</table>
+{% endif %}
+{% endfor %}
+{% endblock %}

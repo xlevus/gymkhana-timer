@@ -1,0 +1,7 @@
+/.pants.*
+/dist/
+/.pids
+
+secrets
+
+.data/
