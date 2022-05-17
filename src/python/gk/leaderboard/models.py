@@ -1,5 +1,7 @@
 from django.contrib.auth.models import User
 from django.db import models
+from django.db.models import F, Window
+from django.db.models.functions import RowNumber
 
 
 class Course(models.Model):
@@ -8,6 +10,24 @@ class Course(models.Model):
 
     def __str__(self):
         return self.name
+
+    def best_times(self):
+        ranks = [
+            pk
+            for (pk, rank) in Time.objects.filter(course=self)
+            .annotate(
+                rank=Window(
+                    expression=RowNumber(),
+                    partition_by=[F("group_id")],
+                    order_by=[F("time_ms").asc()],
+                )
+            )
+            .values_list("pk", "rank")
+            if rank == 1
+        ]
+        return (
+            Time.objects.filter(pk__in=ranks).order_by("time_ms").select_related("user")
+        )
 
 
 class Time(models.Model):
@@ -22,6 +42,9 @@ class Time(models.Model):
     video_url = models.URLField(blank=True)
 
     group_id = models.CharField(max_length=128, blank=True)
+
+    class Options:
+        ordering = ["-run_date"]
 
     def __str__(self):
         return f"{self.group_id} {self.time_ms}"

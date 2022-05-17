@@ -18,6 +18,7 @@ from django.urls import path
 from gk.leaderboard import views
 
 urlpatterns = [
-    path("", views.index),
+    path("", views.index, name="index"),
+    path("course/<slug:slug>/", views.course_detail, name="course-detail"),
     path("admin/", admin.site.urls),
 ]

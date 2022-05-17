@@ -2,33 +2,30 @@ from collections import defaultdict
 
 from django.db.models import F, Window
 from django.db.models.functions import RowNumber
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, render
 
 from . import models
 
 
 def index(request):
-    courses = []
-
-    for course in models.Course.objects.all():
-        ranks = [
-            pk
-            for (pk, rank) in models.Time.objects.filter(course=course)
-            .annotate(
-                rank=Window(
-                    expression=RowNumber(),
-                    partition_by=[F("group_id")],
-                    order_by=[F("time_ms").asc()],
-                )
-            )
-            .values_list("pk", "rank")
-            if rank == 1
-        ]
-        times = (
-            models.Time.objects.filter(pk__in=ranks)
-            .order_by("time_ms")
-            .select_related("user")
-        )
-        courses.append((course, times))
+    courses = [
+        (course, course.best_times()[:5]) for course in models.Course.objects.all()
+    ]
 
     return render(request, "index.html", {"courses": courses})
+
+
+def course_detail(request, slug):
+    course = get_object_or_404(models.Course, slug=slug)
+
+    history = course.times.filter(course=course)[:50]
+
+    return render(
+        request,
+        "course.html",
+        {
+            "course": course,
+            "best_times": course.best_times(),
+            "history": history,
+        },
+    )
