@@ -8,13 +8,19 @@ python_sources(
 pex_binary(
     name="manage",
     entry_point="manage.py",
-    dependencies=[":src"],
+    dependencies=[
+        ":src",
+        "3rdparty:requirements.txt#psycopg2-binary",
+    ],
     restartable=True,
 )
 
 pex_binary(
     name="gunicorn",
     entry_point="gunicorn.py",
-    dependencies=[":src"],
+    dependencies=[
+        ":src",
+        "3rdparty:requirements.txt#psycopg2-binary",
+    ],
     restartable=True,
 )

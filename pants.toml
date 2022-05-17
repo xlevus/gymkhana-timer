@@ -8,6 +8,7 @@ backend_packages = [
     "pants.backend.python.lint.isort",
     "pants.backend.python.lint.flake8",
     "pants.backend.python.typecheck.mypy",
+    "pants.backend.shell",
 ]
 
 [source]
@@ -37,8 +38,8 @@ interpreter_constraints = ["CPython==3.10.*"]
 string_imports = true
 
 
-[docker.registries.coneheads-gcloud]
-address = "australia-southeast1-docker.pkg.dev/coneheads-wgtn/gymkhana"
+[docker.registries.gk]
+address = "gk"
 default = true
 
 [docker]

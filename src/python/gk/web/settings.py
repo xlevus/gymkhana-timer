@@ -12,6 +12,10 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 
 from pathlib import Path
 
+import environ
+
+env = environ.Env()
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -20,12 +24,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-8m=bwfb9#skvjn$@^t)3)&vdhb9^(@_8ou21+n-7-3q8r&t(+q"
+SECRET_KEY = env("SECRET_KEY", default="NotASecret")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = env.bool("DEBUG", True)
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=[])
 
 
 # Application definition
@@ -71,13 +75,10 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "gk.django.wsgi.application"
 
+STATIC_ROOT = env("STATIC_ROOT", default=None)
+MEDIA_ROOT = env("MEDIA_ROOT", default=None)
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": ".data/db.sqlite",
-    }
-}
+DATABASES = {"default": env.db_url("DATABASE_URL", "sqlite:///.data/db.sqlite")}
 
 GCLOUDC_CACHE_ENABLED = True
 

@@ -3,7 +3,6 @@ from collections import defaultdict
 from django.db.models import F, Window
 from django.db.models.functions import RowNumber
 from django.shortcuts import render
-from django_pivot import pivot
 
 from . import models
 
