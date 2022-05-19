@@ -3,6 +3,7 @@ python_sources(
     dependencies=[
         "src/python/gk/leaderboard",
         "src/python/gk/rider",
+        "3rdparty:requirements.txt#django-bootstrap5",
     ],
 )
 

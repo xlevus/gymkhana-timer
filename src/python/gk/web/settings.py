@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "django_bootstrap5",
     "gk.leaderboard.apps.LeaderboardConfig",
     "gk.rider.apps.RiderConfig",
 ]
@@ -88,6 +89,8 @@ GCLOUDC_CACHE_ENABLED = True
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
 
 AUTH_USER_MODEL = "rider.Rider"
+ACCOUNT_ACTIVATION_DAYS = env.int("ACCOUNT_ACTIVATION_DAYS", default=7)
+REGISTRATION_OPEN = env.bool("REGISTRATION_OPEN", default=True)
 
 AUTH_PASSWORD_VALIDATORS = [
     {

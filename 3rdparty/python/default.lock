@@ -10,7 +10,9 @@
 //   ],
 //   "generated_with_requirements": [
 //     "django",
+//     "django-bootstrap5",
 //     "django-environ",
+//     "django-registration",
 //     "gunicorn",
 //     "psycopg2-binary"
 //   ]
@@ -53,6 +55,48 @@
           "artifacts": [
             {
               "algorithm": "sha256",
+              "hash": "58d5c3d29f5a36ffeb94f02f0d786cd53014cf9b3b3951d42e0080d8a9498d30",
+              "url": "https://files.pythonhosted.org/packages/9c/d8/909c4089dbe4ade9f9705f143c9f13f065049a9d5e7d34c828aefdd0a97c/beautifulsoup4-4.11.1-py3-none-any.whl"
+            },
+            {
+              "algorithm": "sha256",
+              "hash": "ad9aa55b65ef2808eb405f46cf74df7fcb7044d5cbc26487f96eb2ef2e436693",
+              "url": "https://files.pythonhosted.org/packages/e8/b0/cd2b968000577ec5ce6c741a54d846dfa402372369b8b6861720aa9ecea7/beautifulsoup4-4.11.1.tar.gz"
+            }
+          ],
+          "project_name": "beautifulsoup4",
+          "requires_dists": [
+            "html5lib; extra == \"html5lib\"",
+            "lxml; extra == \"lxml\"",
+            "soupsieve>1.2"
+          ],
+          "requires_python": ">=3.6.0",
+          "version": "4.11.1"
+        },
+        {
+          "artifacts": [
+            {
+              "algorithm": "sha256",
+              "hash": "e3ce611028d882b74a5faa69e3cbb5bd4dcd9f69936da6e73d33eda42c917944",
+              "url": "https://files.pythonhosted.org/packages/a4/38/aadd1c42ae353943cd1523cdd38ffb267ba95861b4e8bb1a559d975ae612/confusable_homoglyphs-3.2.0-py2.py3-none-any.whl"
+            },
+            {
+              "algorithm": "sha256",
+              "hash": "3b4a0d9fa510669498820c91a0bfc0c327568cecec90648cf3819d4a6fc6a751",
+              "url": "https://files.pythonhosted.org/packages/62/55/0aac1a100d755987e62c12367724b33419ed15921c6a915dc257c886ceff/confusable_homoglyphs-3.2.0.tar.gz"
+            }
+          ],
+          "project_name": "confusable-homoglyphs",
+          "requires_dists": [
+            "click; extra == \"cli\""
+          ],
+          "requires_python": null,
+          "version": "3.2"
+        },
+        {
+          "artifacts": [
+            {
+              "algorithm": "sha256",
               "hash": "07c8638e7a7f548dc0acaaa7825d84b7bd42b10e8d22268b3d572946f1e9b687",
               "url": "https://files.pythonhosted.org/packages/66/90/bce00eb942fbc47b0774ac78910ee4e6f719572aad56dc238823e5d0ee54/Django-4.0.4-py3-none-any.whl"
             },
@@ -73,6 +117,28 @@
           ],
           "requires_python": ">=3.8",
           "version": "4.0.4"
+        },
+        {
+          "artifacts": [
+            {
+              "algorithm": "sha256",
+              "hash": "c7a686420aa98692f15bd16e61a90dc6a3607e441a4dea37af840b83d4820cac",
+              "url": "https://files.pythonhosted.org/packages/88/df/27f372ef3308661455996dba5364e1a031f1a2e9ecbc768e204f9dd862a9/django_bootstrap5-21.3-py3-none-any.whl"
+            },
+            {
+              "algorithm": "sha256",
+              "hash": "35086341881780a44b2e27255894f6029fc5ef75e5a0ec8ebd82f47a5184fa73",
+              "url": "https://files.pythonhosted.org/packages/cd/14/12171c0b92b4290f2300805f6e1a51e28774e6ad1b7bb99a4921999007b3/django-bootstrap5-21.3.tar.gz"
+            }
+          ],
+          "project_name": "django-bootstrap5",
+          "requires_dists": [
+            "Django>=2.2",
+            "beautifulsoup4>=4.8.0",
+            "importlib-metadata<3; python_version < \"3.8\""
+          ],
+          "requires_python": ">=3.7",
+          "version": "21.3"
         },
         {
           "artifacts": [
@@ -102,6 +168,27 @@
           ],
           "requires_python": "<4,>=3.4",
           "version": "0.8.1"
+        },
+        {
+          "artifacts": [
+            {
+              "algorithm": "sha256",
+              "hash": "e79fdbfa22bfaf4182efccb6604391391a7de19438d2669c5b9520a7708efbd2",
+              "url": "https://files.pythonhosted.org/packages/d9/c4/d8bd29e5aa387e91d9db1c1a51d1dbc645782d372ba2eed8d304dd1ea34f/django_registration-3.2-py3-none-any.whl"
+            },
+            {
+              "algorithm": "sha256",
+              "hash": "2ea8c7d89a8760ccde41dfd335aa28ba89073d09aab5a0f5f3d7c8c148fcc518",
+              "url": "https://files.pythonhosted.org/packages/bb/2e/ba73c503763bbb01d200fd181304c7292573adab0ab24d31e1320d60ff00/django-registration-3.2.tar.gz"
+            }
+          ],
+          "project_name": "django-registration",
+          "requires_dists": [
+            "Django!=3.0.*,>=2.2",
+            "confusable-homoglyphs~=3.0"
+          ],
+          "requires_python": ">=3.6",
+          "version": "3.2"
         },
         {
           "artifacts": [
@@ -199,13 +286,13 @@
           "artifacts": [
             {
               "algorithm": "sha256",
-              "hash": "588ffd1dc6e20e9f4f7057aa9873fcdc26e0270362602735d32476bad67d82c5",
-              "url": "https://files.pythonhosted.org/packages/fc/d6/764e0cf61f1456b974d9d71b696d483fe269ab31466d76007def02bc4739/setuptools-62.3.1-py3-none-any.whl"
+              "hash": "68e45d17c9281ba25dc0104eadd2647172b3472d9e01f911efa57965e8d51a36",
+              "url": "https://files.pythonhosted.org/packages/e9/1c/ec080fde54ab30a738c92f794eab7f5d2f354f2b619ee95b2efe353e0766/setuptools-62.3.2-py3-none-any.whl"
             },
             {
               "algorithm": "sha256",
-              "hash": "28c79c24d83c42a5e6d6cc711e5e9a6c1b89326229feaa5807fc277040658600",
-              "url": "https://files.pythonhosted.org/packages/87/db/d840e1b888bd82b0b826b8864d1674df52f6d9d909177e1d144ab38a8c50/setuptools-62.3.1.tar.gz"
+              "hash": "a43bdedf853c670e5fed28e5623403bad2f73cf02f9a2774e91def6bda8265a7",
+              "url": "https://files.pythonhosted.org/packages/4a/25/ec29a23ef38b9456f9965c57a9e1221e6c246d87abbf2a31158799bca201/setuptools-62.3.2.tar.gz"
             }
           ],
           "project_name": "setuptools",
@@ -253,7 +340,27 @@
             "wheel; extra == \"testing-integration\""
           ],
           "requires_python": ">=3.7",
-          "version": "62.3.1"
+          "version": "62.3.2"
+        },
+        {
+          "artifacts": [
+            {
+              "algorithm": "sha256",
+              "hash": "3b2503d3c7084a42b1ebd08116e5f81aadfaea95863628c80a3b774a11b7c759",
+              "url": "https://files.pythonhosted.org/packages/16/e3/4ad79882b92617e3a4a0df1960d6bce08edfb637737ac5c3f3ba29022e25/soupsieve-2.3.2.post1-py3-none-any.whl"
+            },
+            {
+              "algorithm": "sha256",
+              "hash": "fc53893b3da2c33de295667a0e19f078c14bf86544af307354de5fcf12a3f30d",
+              "url": "https://files.pythonhosted.org/packages/f3/03/bac179d539362319b4779a00764e95f7542f4920084163db6b0fd4742d38/soupsieve-2.3.2.post1.tar.gz"
+            }
+          ],
+          "project_name": "soupsieve",
+          "requires_dists": [
+            "backports-functools-lru-cache; python_version < \"3\""
+          ],
+          "requires_python": ">=3.6",
+          "version": "2.3.2.post1"
         },
         {
           "artifacts": [
@@ -304,7 +411,9 @@
   "prefer_older_binary": false,
   "requirements": [
     "django",
+    "django-bootstrap5",
     "django-environ",
+    "django-registration",
     "gunicorn",
     "psycopg2-binary"
   ],
