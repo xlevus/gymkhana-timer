@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "gk.leaderboard.apps.LeaderboardConfig",
+    "gk.rider.apps.RiderConfig",
 ]
 
 
@@ -85,6 +86,8 @@ GCLOUDC_CACHE_ENABLED = True
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
+
+AUTH_USER_MODEL = "rider.Rider"
 
 AUTH_PASSWORD_VALIDATORS = [
     {

@@ -2,6 +2,7 @@ python_sources(
     name="src",
     dependencies=[
         "src/python/gk/leaderboard",
+        "src/python/gk/rider",
     ],
 )
 

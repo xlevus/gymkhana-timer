@@ -1,4 +1,4 @@
-from django.contrib.auth.models import User
+from django.conf import settings
 from django.db import models
 from django.db.models import F, Window
 from django.db.models.functions import RowNumber
@@ -32,11 +32,15 @@ class Course(models.Model):
 
 class Time(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name="times")
-    user = models.ForeignKey(
-        User, on_delete=models.CASCADE, blank=True, null=True, related_name="times"
+    rider = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+        related_name="times",
     )
     bike = models.CharField(max_length=128, blank=True)
-    rider = models.CharField(max_length=128, blank=True)
+    rider_name = models.CharField(max_length=128, blank=True)
     time_ms = models.IntegerField()
     run_date = models.DateTimeField()
     video_url = models.URLField(blank=True)
@@ -50,10 +54,10 @@ class Time(models.Model):
         return f"{self.group_id} {self.time_ms}"
 
     def save(self, *args, **kwargs):
-        if self.user:
-            self.group_id = f"__U{self.user_id}"
+        if self.rider_id:
+            self.group_id = f"__U{self.rider_id}"
         else:
-            self.group_id = f"__R{self.rider}"
+            self.group_id = f"__R{self.rider_name}"
 
         super().save(*args, **kwargs)
 
