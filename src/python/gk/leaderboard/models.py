@@ -26,7 +26,9 @@ class Course(models.Model):
             if rank == 1
         ]
         return (
-            Time.objects.filter(pk__in=ranks).order_by("time_ms").select_related("user")
+            Time.objects.filter(pk__in=ranks)
+            .order_by("time_ms")
+            .select_related("rider")
         )
 
 
@@ -66,4 +68,4 @@ class Time(models.Model):
         millis = self.time_ms % 1000
         seconds = (self.time_ms // 1000) % 60
         minutes = self.time_ms // (1000 * 60)
-        return f"{minutes:02}:{seconds:.0f}.{millis:03}"
+        return f"{minutes:02}:{seconds:02}.{millis:03}"

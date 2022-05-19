@@ -3,31 +3,38 @@
 {% block main %}
 {% for course, times in courses %}
 
-{% if times %}
-<h2><a href="{% url 'course-detail' slug=course.slug %}">{{ course }}</a></h2>
-<table class="table table-striped table-sm mb-5">
-    <thead>
-        <td></td>
-        <td>Rider</td>
-        <td>Bike</td>
-        <td>Time</td>
-    </thead>
+<div class="row">
+    <h2 class="p-3 m-0 bg-secondary"><a class="link-dark" href="{% url 'course-detail' slug=course.slug %}">
+            {{ course }}</a>
+    </h2>
+    {% if times %}
+    <table class="table table-striped mb-5">
+        <thead class="table-dark">
+            <td></td>
+            <td>Rider</td>
+            <td>Bike</td>
+            <td>Time</td>
+        </thead>
 
-    {% for time in times %}
-    <tr>
-        <td>#{{ forloop.counter }}</td>
-        <td>
-            {% if time.user %}
-            {{ time.user.username }}
-            {% else %}
-            {{ time.rider }}
-            {% endif %}
-        </td>
-        <td>{{ time.bike }}</td>
-        <td>{{ time.time }}</td>
-    </tr>
-    {% endfor %}
-</table>
-{% endif %}
+        {% for time in times %}
+        <tr>
+            <td>#{{ forloop.counter }}</td>
+            <td>
+                {% if time.user %}
+                {{ time.rider.username }}
+                {% else %}
+                {{ time.rider_name }}
+                {% endif %}
+            </td>
+            <td>{{ time.bike }}</td>
+            <td>{{ time.time }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% else %}
+    No times for this course!
+    {% endif %}
+</div>
 {% endfor %}
+
 {% endblock %}
