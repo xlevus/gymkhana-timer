@@ -4,3 +4,4 @@ django-environ
 psycopg2-binary
 django-registration
 django-bootstrap5
+django-allauth
