@@ -21,5 +21,6 @@ urlpatterns = [
     path("", views.index, name="index"),
     path("rider/", include("gk.rider.urls")),
     path("course/<slug:slug>/", views.course_detail, name="course-detail"),
+    path("timer/", include("gk.timer.urls")),
     path("admin/", admin.site.urls),
 ]
