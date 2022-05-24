@@ -1,4 +1,4 @@
-{% load i18n %}
+{% load i18n django_bootstrap5 %}
 <!doctype html>
 <html lang="en">
 
@@ -45,7 +45,10 @@
         </ul>
         <div class="d-flex navbar-text">
           {% if user.is_authenticated %}
-          {{ user.username }}
+          <ul class="navbar-nav me-auto mb-2 mb-md-0">
+            <li class="nav-item"><a class="nav-link" href='#'>{{ user.username }}</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'account_logout' %}">{% trans "Logout" %}</a></li>
+          </ul>
           {% else %}
           <a href="{% url 'account_login' %}">{% trans "Login" %}</a>
           {% endif %}
@@ -55,6 +58,8 @@
   </nav>
 
   <main class="container">
+    {% bootstrap_messages %}
+
     {% block main %}{% endblock %}
   </main>
 
