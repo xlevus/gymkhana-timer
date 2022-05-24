@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load i18n %}
 
 {% block main %}
 {% for course, times in courses %}
@@ -11,9 +12,9 @@
     <table class="table table-striped mb-5">
         <thead class="table-dark">
             <td></td>
-            <td>Rider</td>
-            <td>Bike</td>
-            <td>Time</td>
+            <td>{% trans "Rider" %}</td>
+            <td>{% trans "Bike" %}</td>
+            <td>{% trans "Time" %}</td>
         </thead>
 
         {% for time in times %}
@@ -25,6 +26,7 @@
                 {% else %}
                 {{ time.rider_name }}
                 {% endif %}
+                {% if forloop.counter0 == 0 %}<i class="bi bi-trophy"></i>{% endif %}
             </td>
             <td>{{ time.bike }}</td>
             <td>{{ time.time }}</td>
@@ -32,7 +34,7 @@
         {% endfor %}
     </table>
     {% else %}
-    No times for this course!
+    {% blocktrans %}No times for this course!{% endblocktrans %}
     {% endif %}
 </div>
 {% endfor %}
