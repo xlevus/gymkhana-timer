@@ -64,7 +64,11 @@
                 name="password">
             <label for="floatingPassword">{% trans 'Password' %}</label>
         </div>
-
+        <div class="checkbox mb-3">
+            <label>
+                <input type="checkbox" name="remember" value="1"> {% trans "Remember me" %}
+            </label>
+        </div>
         <button class="w-100 mb-2 btn btn-lg btn-primary" type="submit">{% trans "Sign in" %}</button>
         <a class="w-100 btn btn-lg btn-success" href="{% url 'account_signup' %}">{% trans "Register" %}</a>
         {# <p class="mt-5 mb-3 text-muted">&copy; 2017–2022</p> #}
