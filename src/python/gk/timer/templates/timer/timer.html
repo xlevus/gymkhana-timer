@@ -1,6 +1,12 @@
 {% extends "base.html" %}
 {% load i18n %}
 
+{% block head %}
+{{ block.super }}
+<script src="https://cdn.jsdelivr.net/npm/nosleep.js@0.12.0/dist/NoSleep.min.js"
+    integrity="sha256-iHt2PlPsrrp73dyssp9/+vnaijV2wsyn6koezRT/cxw=" crossorigin="anonymous"></script>
+{% endblock %}
+
 
 {% block main %}
 
@@ -56,6 +62,7 @@
 </form>
 
 <script type="application/javascript">
+    var noSleep = new NoSleep();
 
     var time = document.getElementById('time');
     var start = document.getElementById('start');
@@ -87,6 +94,8 @@
         start = new Date();
         timer = setInterval(tick, 37);
         form.style.visibility = "hidden";
+
+        noSleep.enable();
     });
 
     stop.addEventListener("click", function (e) {
@@ -97,8 +106,8 @@
             form.style.visibility = "visible";
             location.hash = '#save_form';
         }
+        noSleep.disable();
     });
-
 
 </script>
 
