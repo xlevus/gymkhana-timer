@@ -6,6 +6,8 @@ from django.db import models
 
 
 class Timer(models.Model):
+    WEB_TIMER_SECRET = "_web_timer_"
+
     name = models.CharField(max_length=50)
     secret = models.CharField(max_length=64, blank=True)
     owner = models.ForeignKey(

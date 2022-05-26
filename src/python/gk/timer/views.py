@@ -39,12 +39,14 @@ class TimerView(LoginRequiredMixin, DetailView):
 
     def get_timer(self) -> Timer:
         try:
-            timer = Timer.objects.get(owner=self.request.user, secret="")
+            timer = Timer.objects.get(
+                owner=self.request.user, secret=Timer.WEB_TIMER_SECRET
+            )
         except Timer.DoesNotExist:
             timer = Timer.objects.create(
                 owner=self.request.user,
                 name="Web Timer",
-                secret="_",
+                secret=Timer.WEB_TIMER_SECRET,
             )
         return timer
 
