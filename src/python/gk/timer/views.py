@@ -62,9 +62,6 @@ class TimerView(LoginRequiredMixin, DetailView):
                 message=_("Saved time {}").format(time),
             )
         else:
-            import pdb
-
-            pdb.set_trace()
             messages.add_message(
                 request=request, level=messages.ERROR, message=_("Unable to save time.")
             )
