@@ -40,7 +40,7 @@
 
             {% for name in names %}
             <button type="submit" name="rider_name" value="{{ name.rider_name }}"
-                class="btn btn-outline-primary btn-lg">
+                class="btn btn-outline-secondary btn-lg">
                 {{ name.rider_name }}
             </button>
             {% endfor %}
@@ -48,7 +48,7 @@
             <div class="input-group input-group-lg">
                 <input type="text" class="form-control" name="new_rider_name" placeholder="{% trans 'Enter Name' %}"
                     aria-describedby="inputGroup-sizing-lg">
-                <button type="submit" class="btn btn-outline-primary" type="button"><i class="bi bi-save-fill"></i>
+                <button type="submit" class="btn btn-outline-secondary" type="button"><i class="bi bi-save-fill"></i>
                 </button>
             </div>
         </div>

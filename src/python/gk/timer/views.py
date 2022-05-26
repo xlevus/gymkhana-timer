@@ -29,6 +29,7 @@ class TimerView(LoginRequiredMixin, DetailView):
             self.object.times.filter(create_date__date=date.today())
             .exclude(rider_name="")
             .values("rider_name")
+            .distinct()
         )
 
     def get_context_data(self, **kwargs):
