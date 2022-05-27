@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block head %}
+{{ block.super }}
+<script src="https://cdn.jsdelivr.net/npm/nosleep.js@0.12.0/dist/NoSleep.min.js"
+    integrity="sha256-iHt2PlPsrrp73dyssp9/+vnaijV2wsyn6koezRT/cxw=" crossorigin="anonymous"></script>
+{% endblock %}
+
+
+{% block main %}
+
+<h1>Timer: <strong>{{ object.name }}</strong></h1>
+
+<div class="row mb-5 mt-5">
+    <div id="time" class="col-sm-12 text-center fs-1 font-monospace">
+        00:00.0000
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-sm-6 d-grid gap-2 mb-5 mx-auto">
+        <button id="start" class="mb-2 btn btn-lg btn-success">
+            <i class="bi bi-play-fill"></i>
+            {% trans "Start" %}
+        </button>
+        <button id="stop" class="btn btn-lg btn-danger">
+            <i class="bi bi-stop-fill"></i>
+            {% trans "Stop" %}
+        </button>
+    </div>
+</div>
+
+<form action="." method="POST" style="visibility: hidden;" id="save_form">
+    {% csrf_token %}
+    <input id="time_ms" name="time_ms" type="hidden">
+
+    <div class="row mb-5">
+        <div class="col-sm-6 d-grid gap-2 col-12 mx-auto">
+            <h2>Save To:</h2>
+            {% for rider in riders %}
+            <button type="submit" name="rider" value="{{ rider.pk }}" class="btn btn-outline-primary btn-lg">
+                {{ rider.username }}
+            </button>
+            {% endfor %}
+
+            {% for name in names %}
+            <button type="submit" name="rider_name" value="{{ name.rider_name }}"
+                class="btn btn-outline-secondary btn-lg">
+                {{ name.rider_name }}
+            </button>
+            {% endfor %}
+
+            <div class="input-group input-group-lg">
+                <input type="text" class="form-control" name="new_rider_name" placeholder="{% trans 'Enter Name' %}"
+                    aria-describedby="inputGroup-sizing-lg">
+                <button type="submit" class="btn btn-outline-secondary" type="button"><i class="bi bi-save-fill"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</form>
+
+<script type="application/javascript">
+    var noSleep = new NoSleep();
+
+    var time = document.getElementById('time');
+    var start = document.getElementById('start');
+    var stop = document.getElementById('stop');
+    var time_field = document.getElementById("time_ms");
+    var form = document.getElementById("save_form");
+    var start;
+    var timer;
+    var elapsed = 0;
+
+    function pad(num, len) {
+        var str = "" + num;
+        while (str.length < len) { str = '0' + str; }
+        return str
+    }
+
+    function tick() {
+        var now = new Date();
+        elapsed = now - start;
+
+        var minutes = elapsed / 1000 / 60 | 0;
+        var seconds = elapsed / 1000 | 0;
+        var ms = elapsed % 1000;
+
+        time.innerHTML = pad(minutes, 2) + ":" + pad(seconds, 2) + "." + pad(ms, 3);
+    }
+
+    start.addEventListener("click", function (e) {
+        start = new Date();
+        timer = setInterval(tick, 37);
+        form.style.visibility = "hidden";
+
+        noSleep.enable();
+    });
+
+    stop.addEventListener("click", function (e) {
+        if (timer) {
+            timer = clearInterval(timer);
+            tick();
+            time_field.setAttribute("value", elapsed);
+            form.style.visibility = "visible";
+            location.hash = '#save_form';
+        }
+        noSleep.disable();
+    });
+
+</script>
+
+{% endblock %}

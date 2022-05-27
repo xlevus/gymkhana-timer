@@ -30,6 +30,7 @@ SECRET_KEY = env("SECRET_KEY", default="NotASecret")
 DEBUG = env.bool("DEBUG", True)
 
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=[])
+CSRF_TRUSTED_ORIGINS = env.list("CSRF_TRUSTED_ORIGINS", default=[])
 
 
 # Application definition
@@ -93,8 +94,6 @@ MEDIA_ROOT = env("MEDIA_ROOT", default=None)
 
 DATABASES = {"default": env.db_url("DATABASE_URL", "sqlite:///.data/db.sqlite")}
 
-GCLOUDC_CACHE_ENABLED = True
-
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
@@ -124,13 +123,10 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = "en-us"
 
-TIME_ZONE = "UTC"
-
 USE_I18N = True
-
 USE_L10N = True
-
 USE_TZ = True
+TIME_ZONE = env("TIME_ZONE", default="Pacific/Auckland")
 
 
 # Static files (CSS, JavaScript, Images)
@@ -146,6 +142,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
 LOGIN_REDIRECT_URL = "index"
+LOGIN_URL = "account_login"
 ACCOUNT_EMAIL_REQUIRED = True
-ACCOUNT_AUTHENTICATION_METHOD = "email"
+ACCOUNT_AUTHENTICATION_METHOD = "username_email"
 ACCOUNT_EMAIL_VERIFICATION = "none"

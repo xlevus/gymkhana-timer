@@ -49,11 +49,22 @@ class Time(models.Model):
 
     group_id = models.CharField(max_length=128, blank=True)
 
+    timer = models.ForeignKey(
+        "timer.Timer", blank=True, null=True, on_delete=models.CASCADE
+    )
+    create_date = models.DateTimeField(auto_now_add=True)
+
     class Options:
-        ordering = ["-run_date"]
+        ordering = ["run_date"]
+
+    @property
+    def display_name(self):
+        if self.rider:
+            return str(self.rider)
+        return self.rider_name
 
     def __str__(self):
-        return f"{self.group_id} {self.time_ms}"
+        return f"{self.display_name}: {self.time}"
 
     def save(self, *args, **kwargs):
         if self.rider_id:
