@@ -10,7 +10,7 @@
 
 {% block main %}
 
-<h1>Timer: <strong>{{ object.name }}</strong></h1>
+<h1>Timer: <strong><a href="{% url 'course_timer' slug=course.slug %}">{{ object.name }}</a></strong></h1>
 
 <div class="row mb-5 mt-5">
     <div id="time" class="col-sm-12 text-center fs-1 font-monospace">

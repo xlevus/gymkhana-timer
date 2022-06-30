@@ -5,8 +5,15 @@
 {% for course, times in courses %}
 
 <div class="row">
-    <h2 class="p-3 m-0 bg-secondary"><a class="link-dark" href="{% url 'course-detail' slug=course.slug %}">
-            {{ course }}</a>
+    <h2 class="p-3 m-0 bg-secondary">
+        <a class="link-dark" href="{% url 'course-detail' slug=course.slug %}">
+            {{ course }}
+        </a>
+        {% if user.is_authenticated %}
+        <a class="btn btn-success btn float-end" href="{% url 'course_timer' slug=course.slug %}">
+            {% trans "Timer" %}
+        </a>
+        {% endif %}
     </h2>
 
     {% if times %}
