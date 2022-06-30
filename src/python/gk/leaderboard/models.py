@@ -19,7 +19,7 @@ class Course(models.Model):
                 rank=Window(
                     expression=RowNumber(),
                     partition_by=[F("group_id")],
-                    order_by=[F("time_ms").asc()],
+                    order_by=[F("total_ms").asc()],
                 )
             )
             .values_list("pk", "rank")
@@ -27,7 +27,7 @@ class Course(models.Model):
         ]
         return (
             Time.objects.filter(pk__in=ranks)
-            .order_by("time_ms")
+            .order_by("total_ms")
             .select_related("rider")
         )
 
@@ -43,7 +43,11 @@ class Time(models.Model):
     )
     bike = models.CharField(max_length=128, blank=True)
     rider_name = models.CharField(max_length=128, blank=True)
+
     time_ms = models.IntegerField()
+    penalty_ms = models.IntegerField(default=0)
+    total_ms = models.IntegerField()
+
     run_date = models.DateTimeField()
     video_url = models.URLField(blank=True)
 
@@ -64,7 +68,8 @@ class Time(models.Model):
         return self.rider_name
 
     def __str__(self):
-        return f"{self.display_name}: {self.time}"
+        penalty = f" ({self.penalty})" if self.penalty_ms else ""
+        return f"{self.display_name}: {self.time}{penalty}"
 
     def save(self, *args, **kwargs):
         if self.rider_id:
@@ -72,11 +77,20 @@ class Time(models.Model):
         else:
             self.group_id = f"__R{self.rider_name}"
 
+        self.total_ms = self.time_ms + self.penalty_ms
+
         super().save(*args, **kwargs)
 
     @property
     def time(self) -> str:
-        millis = self.time_ms % 1000
-        seconds = (self.time_ms // 1000) % 60
-        minutes = self.time_ms // (1000 * 60)
+        ms = self.total_ms
+        millis = ms % 1000
+        seconds = (ms // 1000) % 60
+        minutes = ms // (1000 * 60)
         return f"{minutes:02}:{seconds:02}.{millis:03}"
+
+    @property
+    def penalty(self) -> str:
+        if self.penalty_ms:
+            return f"+{ self.penalty_ms // 1000}"
+        return ""

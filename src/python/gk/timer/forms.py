@@ -8,6 +8,7 @@ from gk.timer.models import Timer
 
 class TimerForm(forms.Form):
     time_ms = forms.IntegerField(required=True)
+    penalty_ms = forms.IntegerField(required=False)
     rider = forms.ModelChoiceField(Rider.objects, required=False)
     rider_name = forms.CharField(required=False)
     new_rider_name = forms.CharField(required=False)
@@ -20,5 +21,6 @@ class TimerForm(forms.Form):
                 self.cleaned_data["rider_name"] or self.cleaned_data["new_rider_name"]
             ),
             time_ms=self.cleaned_data["time_ms"],
+            penalty_ms=self.cleaned_data.get("penalty_ms") or 0,
             run_date=datetime.utcnow(),
         )

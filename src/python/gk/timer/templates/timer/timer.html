@@ -13,8 +13,9 @@
 <h1>Timer: <strong><a href="{% url 'course_timer' slug=course.slug %}">{{ object.name }}</a></strong></h1>
 
 <div class="row mb-5 mt-5">
-    <div id="time" class="col-sm-12 text-center fs-1 font-monospace">
-        00:00.0000
+    <div class="col-sm-12 text-center fs-1 font-monospace">
+        <span id="time">00:00.0000</span>
+        <span id="penalties" class="text-danger"></span>
     </div>
 </div>
 
@@ -31,9 +32,21 @@
     </div>
 </div>
 
+<div class="row">
+    <div class="col-sm-6 d-grid gap-2 mb-5 mx-auto">
+        <div class="btn-group" role="group">
+            <button type="button" class="btn btn-outline-danger" onclick="penalty(1000)">+1</button>
+            <button type="button" class="btn btn-outline-danger" onclick="penalty(3000)">+3</button>
+            <button type="button" class="btn btn-outline-success" onclick="penalty(-1000)">-1</button>
+        </div>
+    </div>
+</div>
+
+
 <form action="." method="POST" style="visibility: hidden;" id="save_form">
     {% csrf_token %}
     <input id="time_ms" name="time_ms" type="hidden">
+    <input id="penalty_ms" name="penalty_ms" value="0" type="hidden">
 
     <div class="row mb-5">
         <div class="col-sm-6 d-grid gap-2 col-12 mx-auto">
@@ -65,18 +78,28 @@
     var noSleep = new NoSleep();
 
     var time = document.getElementById('time');
+    var penalties = document.getElementById('penalties');
     var start = document.getElementById('start');
     var stop = document.getElementById('stop');
     var time_field = document.getElementById("time_ms");
+    var penalty_field = document.getElementById("penalty_ms");
     var form = document.getElementById("save_form");
     var start;
     var timer;
     var elapsed = 0;
+    var penalty_ms = 0;
 
     function pad(num, len) {
         var str = "" + num;
         while (str.length < len) { str = '0' + str; }
         return str
+    }
+
+    function penalty(ms) {
+        penalty_ms += ms;
+        if (penalty_ms < 0) { penalty_ms = 0; };
+        penalty_field.setAttribute("value", penalty_ms);
+        penalties.innerHTML = "+" + penalty_ms / 1000;
     }
 
     function tick() {

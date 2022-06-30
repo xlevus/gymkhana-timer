@@ -5,7 +5,8 @@
         <th scope="col" width="1"></th>
         <th scope="col">{% trans "Rider" %}</th>
         <th scope="col" width="10%">{% trans "Bike" %}</th>
-        <th scope="col" width="10%">{% trans "Time" %}</th>
+        <th scope="col" width="5%" class="text-end">{% trans "Penalty" %}</th>
+        <th scope="col" width="10%" class="text-end">{% trans "Time" %}</th>
     </thead>
 
     {% for time in times %}
@@ -16,7 +17,8 @@
             {% if forloop.counter0 == 0 %}<i class="bi bi-trophy"></i>{% endif %}
         </td>
         <td>{{ time.bike }}</td>
-        <td>{{ time.time }}</td>
+        <td class="text-danger text-end">{{ time.penalty }}</td>
+        <td class="text-end">{{ time.time }}</td>
     </tr>
     {% endfor %}
 </table>
