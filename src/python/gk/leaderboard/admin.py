@@ -12,7 +12,15 @@ class CourseAdmin(admin.ModelAdmin):
 
 
 class TimeAdmin(admin.ModelAdmin):
-    list_display = ("course", "rider", "rider_name", "time_ms", "penalty_ms", "total_ms", "run_date")
+    list_display = (
+        "course",
+        "rider",
+        "rider_name",
+        "time_ms",
+        "penalty_ms",
+        "total_ms",
+        "run_date",
+    )
 
 
 admin.site.register(models.Course, CourseAdmin)

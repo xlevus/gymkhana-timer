@@ -13,22 +13,19 @@ def forward(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('leaderboard', '0002_time_create_date_time_timer'),
+        ("leaderboard", "0002_time_create_date_time_timer"),
     ]
 
     operations = [
-       migrations.AddField(
-            model_name='time',
-            name='penalty_ms',
+        migrations.AddField(
+            model_name="time",
+            name="penalty_ms",
             field=models.IntegerField(default=0),
         ),
         migrations.AddField(
-            model_name='time',
-            name='total_ms',
+            model_name="time",
+            name="total_ms",
             field=models.IntegerField(default=0),
         ),
-        migrations.RunPython(
-            forward,
-            lambda _, __: None
-        )
+        migrations.RunPython(forward, lambda _, __: None),
     ]
