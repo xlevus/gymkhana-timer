@@ -18,7 +18,7 @@ def index(request):
 def course_detail(request, slug):
     course = get_object_or_404(models.Course, slug=slug)
 
-    history = course.times.filter(course=course)[:50]
+    history = course.times.filter(course=course).order_by("-run_date")[:50]
 
     return render(
         request,
