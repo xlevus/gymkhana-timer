@@ -18,24 +18,8 @@
     {% trans "Best Times" %}
 </h2>
 
+{% include "includes/top_riders_table.html" with times=best_times %}
 
-<table class="table table-striped table-sm mb-5">
-    <thead>
-        <td></td>
-        <td>{% trans "Rider" %}</td>
-        <td>{% trans "Bike" %}</td>
-        <td>{% trans "Time" %}</td>
-    </thead>
-
-    {% for time in best_times %}
-    <tr>
-        <td>#{{ forloop.counter }}</td>
-        <td>{{ time.display_name }}</td>
-        <td>{{ time.bike }}</td>
-        <td>{{ time.time }}</td>
-    </tr>
-    {% endfor %}
-</table>
 {% else %}
 <p>{% trans "There are no times for this course." %}</p>
 {% endif %}
@@ -45,10 +29,10 @@
 <h2>{% trans "History" %}</h2>
 <table class="table table-striped table-sm mb-5">
     <thead>
-        <td>{% trans "Date" %}</td>
-        <td>{% trans "Rider" %}</td>
-        <td>{% trans "Bike" %}</td>
-        <td>{% trans "Time" %}</td>
+        <td width="20%">{% trans "Date" %}</td>
+        <td width="auto">{% trans "Rider" %}</td>
+        <td width="10%">{% trans "Bike" %}</td>
+        <td width="10%">{% trans "Time" %}</td>
     </thead>
 
     {% for time in history %}
