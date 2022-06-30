@@ -84,7 +84,7 @@
         elapsed = now - start;
 
         var minutes = elapsed / 1000 / 60 | 0;
-        var seconds = elapsed / 1000 | 0;
+        var seconds = elapsed / 1000 % 60 | 0;
         var ms = elapsed % 1000;
 
         time.innerHTML = pad(minutes, 2) + ":" + pad(seconds, 2) + "." + pad(ms, 3);
