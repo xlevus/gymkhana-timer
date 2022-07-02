@@ -8,6 +8,7 @@ app = "leaderboard"
     DEBUG = "false"
     ALLOWED_HOSTS = "leaderboard.fly.dev,leaderboard.coneheads.org"
     CSRF_TRUSTED_ORIGINS = "https://leaderboard.fly.dev,https://leaderboard.coneheads.org"
+    TIME_ZONE = "UTC"
 
 
 [[services]]
