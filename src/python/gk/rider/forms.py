@@ -1,5 +1,4 @@
 from django import forms
-
 from gk.rider.models import Rider
 
 
