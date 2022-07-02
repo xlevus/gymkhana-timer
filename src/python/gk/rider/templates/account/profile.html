@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% load i18n django_bootstrap5 %}
+
+{% block main %}
+
+<h1>Your Profile
+    <a class="btn btn-danger float-end" href="{% url 'account_logout' %}">{% trans "Logout" %}</a>
+
+</h1>
+
+<form action="." method="POST">
+    {% csrf_token %}
+    {% bootstrap_form form %}
+
+    {% bootstrap_button button_type="submit" content="Save" %}
+</form>
+
+
+
+{% endblock %}
