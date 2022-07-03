@@ -4,13 +4,13 @@
 {% block main %}
 {% generate_menu %}
 <div class="row">
-    <div class="col-md-2">
+    <div class="col-md-3">
         {% block account-nav %}
         {% include "menus/account.html" with menu=menus.account %}
         {% endblock %}
     </div>
 
-    <div class="col-md-10">
+    <div class="col-md-9">
         {% block account-main %}
         {% endblock %}
     </div>

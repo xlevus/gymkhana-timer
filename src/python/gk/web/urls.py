@@ -15,12 +15,15 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import include, path
-from gk.leaderboard import views
+from gk.leaderboard import views as leaderboard
+from gk.web import views as web
 
 urlpatterns = [
-    path("", views.IndexView.as_view(), name="index"),
+    path("", leaderboard.IndexView.as_view(), name="index"),
     path("rider/", include("gk.rider.urls")),
-    path("course/<slug:slug>/", views.CourseDetailView.as_view(), name="course-detail"),
+    path("course/<slug:slug>/", leaderboard.CourseDetailView.as_view(), name="course-detail"),
     path("timer/", include("gk.timer.urls")),
     path("admin/", admin.site.urls),
+    path("tos/", web.TermsOfServiceView.as_view(), name="terms-of-service"),
+    path("privacy/", web.PrivacyPolicyView.as_view(), name="privacy-policy"),
 ]
