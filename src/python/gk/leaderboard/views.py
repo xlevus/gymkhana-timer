@@ -3,7 +3,7 @@ from collections import defaultdict
 from django.db.models import F, Window
 from django.db.models.functions import RowNumber
 from django.shortcuts import get_object_or_404, render
-from django.views.generic import TemplateView, DetailView
+from django.views.generic import DetailView, TemplateView
 
 from . import models
 
@@ -17,10 +17,7 @@ class IndexView(TemplateView):
             yield (course, qs)
 
     def get_context_data(self, **kwargs):
-        return super().get_context_data(
-            times=self.times(),
-            **kwargs
-        )
+        return super().get_context_data(times=self.times(), **kwargs)
 
 
 class CourseDetailView(DetailView):
@@ -35,7 +32,5 @@ class CourseDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         return super().get_context_data(
-            history=self.history(),
-            best_times=self.best_times(),
-            **kwargs
+            history=self.history(), best_times=self.best_times(), **kwargs
         )
