@@ -24,7 +24,8 @@
     {% endblock %}
 </head>
 
-<body class="d-flex flex-column h-100">
+<body {% block body-tag %}class="d-flex flex-column h-100" {% endblock %}>
+    {% block body %}
 
     {% block nav %}
     <header>
@@ -63,10 +64,10 @@
         <div class="container">
             <span class="text-muted">
                 <ul class="list-inline mb-0 small">
-                    <li class="list-inline-item"><a class="text-reset" href='{% url "privacy-policy" %}'>Privacy
-                            Policy</a></li>
-                    <li class="list-inline-item"><a class="text-reset" href='{% url "terms-of-service" %}'>Terms of
-                            Service</a></li>
+                    <li class="list-inline-item"><a class="text-reset" href='{% url "privacy-policy" %}'>
+                            Privacy Policy</a></li>
+                    <li class="list-inline-item"><a class="text-reset" href='{% url "terms-of-service" %}'>
+                            Terms of Service</a></li>
                 </ul>
             </span>
         </div>
@@ -77,7 +78,7 @@
         integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2"
         crossorigin="anonymous"></script>
 
-
+    {% endblock %}
 </body>
 
 </html>
