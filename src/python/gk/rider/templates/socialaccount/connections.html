@@ -1,0 +1,56 @@
+{% extends "account/base.html" %}
+{% load i18n socialaccount %}
+
+{% block head_title %}{% trans "Account Connections" %} | {{ block.super }}{% endblock %}
+
+{% block account-main %}
+<h1>{% trans "Account Connections" %}</h1>
+
+{% if form.accounts %}
+<p>
+    {% blocktrans %}You can sign in to your account using any of the following third party accounts:{% endblocktrans %}
+</p>
+
+<form method="post" action="{% url 'socialaccount_connections' %}">
+    {% csrf_token %}
+
+    <div class="mb-3">
+        {% if form.non_field_errors %}
+        <div id="errorMsg">{{ form.non_field_errors }}</div>
+        {% endif %}
+
+        {% for base_account in form.accounts %}
+        {% with base_account.get_provider_account as account %}
+        <div class="form-check">
+            <input id="id_account_{{ base_account.id }}" class="form-check-input" type="radio" name="account"
+                value="{{ base_account.id }}" />
+
+            <label class="form-check-label" for="id_account_{{ base_account.id }}">
+                <span
+                    class="socialaccount_provider {{ base_account.provider }} {{ account.get_brand.id }} badge bg-primary">
+                    <i class="bi bi-{{ account.get_brand.id }}"></i>
+                    {{account.get_brand.name}}
+                </span>
+                {{ account }}
+            </label>
+        </div>
+        {% endwith %}
+        {% endfor %}
+
+
+    </div>
+
+    <button class="btn btn-danger" type="submit">{% trans 'Disconnect' %}</button>
+</form>
+
+{% else %}
+<p>{% trans 'You currently have no social network accounts connected to this account.' %}</p>
+{% endif %}
+
+<h2 class="mt-5">{% trans 'Connect a 3rd Party Account' %}</h2>
+
+<a class="btn btn-primary" href='{% provider_login_url "facebook" method="oauth2" %}'>
+    <i class="bi bi-facebook"></i> Facebook
+</a>
+
+{% endblock %}

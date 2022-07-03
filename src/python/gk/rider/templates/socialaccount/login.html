@@ -1,10 +1,14 @@
 {% extends "account/login.html" %}
-
 {% load i18n %}
+
+{% block head_title %}{% trans "Login" %} | {{ block.super }}{% endblock %}
 
 {% block form %}
 {% if process == "connect" %}
-<h1>{% blocktrans with provider.name as provider %}Connect {{ provider }}{% endblocktrans %}</h1>
+<h1>{% blocktrans with provider.name as provider %}Connect
+    {{ provider }}{% endblocktrans %}
+</h1>
+
 
 <p>
     {% blocktrans with provider.name as provider %}You are about to connect a new third party account from
@@ -20,7 +24,9 @@
 
 <form method="post">
     {% csrf_token %}
-    <button class="btn btn-large btn-primary" type="submit">{% trans "Continue" %}</button>
+    <button class="btn btn-large btn-primary" type="submit">
+        {% trans "Continue" %}
+    </button>
     <a class="btn btn-danger" href="{% url 'index' %}">Back</a>
 </form>
 {% endblock %}
