@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% load menu %}
+
+{% block main %}
+{% generate_menu %}
+<div class="row">
+    <div class="col-md-2">
+        {% block account-nav %}
+        {% include "menus/account.html" with menu=menus.account %}
+        {% endblock %}
+    </div>
+
+    <div class="col-md-10">
+        {% block account-main %}
+        {% endblock %}
+    </div>
+</div>
+{% endblock %}

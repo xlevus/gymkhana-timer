@@ -1,0 +1,10 @@
+<ul class="nav flex-column nav-pills mb-3">
+    {% for item in menu %}
+    {% if item.visible %}
+    <li class="nav-item {% if item.children %}dropdown{% endif %}">
+        <a href="{{ item.url }}" class="nav-link {% if item.selected %}active{% endif %}" aria-current="page">
+            {{ item.title }}</a>
+    </li>
+    {% endif %}
+    {% endfor %}
+</ul>

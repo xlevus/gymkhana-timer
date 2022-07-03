@@ -1,7 +1,7 @@
-{% extends "base.html" %}
+{% extends "account/base.html" %}
 {% load i18n django_bootstrap5 %}
 
-{% block main %}
+{% block account-main %}
 
 <h1>Your Profile
     <a class="btn btn-danger float-end" href="{% url 'account_logout' %}">{% trans "Logout" %}</a>
