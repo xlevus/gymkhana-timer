@@ -3,29 +3,39 @@ from collections import defaultdict
 from django.db.models import F, Window
 from django.db.models.functions import RowNumber
 from django.shortcuts import get_object_or_404, render
+from django.views.generic import TemplateView, DetailView
 
 from . import models
 
 
-def index(request):
-    courses = [
-        (course, course.best_times()[:5]) for course in models.Course.objects.all()
-    ]
+class IndexView(TemplateView):
+    template_name = "index.html"
 
-    return render(request, "index.html", {"courses": courses})
+    def times(self):
+        for course in models.Course.objects.all():
+            qs = course.best_times()[:5]
+            yield (course, qs)
+
+    def get_context_data(self, **kwargs):
+        return super().get_context_data(
+            times=self.times(),
+            **kwargs
+        )
 
 
-def course_detail(request, slug):
-    course = get_object_or_404(models.Course, slug=slug)
+class CourseDetailView(DetailView):
+    object: models.Course
+    model = models.Course
 
-    history = course.times.filter(course=course).order_by("-run_date")[:50]
+    def history(self):
+        return self.object.times.order_by("-run_date")[:50]
 
-    return render(
-        request,
-        "course.html",
-        {
-            "course": course,
-            "best_times": course.best_times(),
-            "history": history,
-        },
-    )
+    def best_times(self):
+        return self.object.best_times()
+
+    def get_context_data(self, **kwargs):
+        return super().get_context_data(
+            history=self.history(),
+            best_times=self.best_times(),
+            **kwargs
+        )
