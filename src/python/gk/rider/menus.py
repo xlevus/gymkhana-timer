@@ -61,7 +61,7 @@ Menu.add_item("account", MenuItem(
     exact_url=True,
 ))
 Menu.add_item("account", MenuItem(
-    "Log Out",
+    "Sign Out",
     reverse("account_logout"),
     check=logged_in,
     exact_url=True,

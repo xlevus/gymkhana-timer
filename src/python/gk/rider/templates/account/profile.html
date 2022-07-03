@@ -3,10 +3,7 @@
 
 {% block account-main %}
 
-<h1>Your Profile
-    <a class="btn btn-danger float-end" href="{% url 'account_logout' %}">{% trans "Logout" %}</a>
-
-</h1>
+<h1>{% trans "Your Profile" %}</h1>
 
 <form action="." method="POST">
     {% csrf_token %}
