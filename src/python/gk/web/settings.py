@@ -155,16 +155,16 @@ SOCIALACCOUNT_PROVIDERS = {
         "INIT_PARAMS": {"cookie": True},
         "FIELDS": [
             "id",
-            "first_name",
-            "last_name",
-            "middle_name",
+            # "first_name",
+            # "last_name",
+            # "middle_name",
             "name",
-            "name_format",
-            "picture",
-            "short_name",
+            # "name_format",
+            # "picture",
+            # "short_name",
         ],
         "EXCHANGE_TOKEN": True,
-        "LOCALE_FUNC": "path.to.callable",
+        # "LOCALE_FUNC": "path.to.callable",
         "VERIFIED_EMAIL": False,
         "VERSION": "v13.0",
     }
@@ -173,3 +173,5 @@ SOCIALACCOUNT_PROVIDERS = {
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_AUTHENTICATION_METHOD = "username_email"
 ACCOUNT_EMAIL_VERIFICATION = "none"
+ACCOUNT_DEFAULT_HTTP_PROTOCOL = "https"
+SOCIALACCOUNT_QUERY_EMAIL = True
