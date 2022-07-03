@@ -3,6 +3,13 @@ from django.contrib.auth.admin import UserAdmin
 
 from .models import Rider
 
-admin.site.register(Rider, UserAdmin)
+class RiderAdmin(UserAdmin):
+    fieldsets = UserAdmin.fieldsets + ((
+        "Profile",
+        {"fields": ["_display_name"]}
+    ),)
+
+
+admin.site.register(Rider, RiderAdmin)
 
 # Register your models here.
