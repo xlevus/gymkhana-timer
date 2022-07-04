@@ -9,12 +9,17 @@ backend_packages = [
     "pants.backend.python.lint.flake8",
     "pants.backend.python.typecheck.mypy",
     "pants.backend.shell",
+    "pants.backend.plugin_development",
+    "upants",
 ]
+
+pythonpath = ["%(buildroot)s/pants-plugins"]
 
 [source]
 root_patterns = [
-    "/src/python",
-    "/src/micropython",
+    "src/python",
+    "src/micropython",
+    "pants-plugins",
 ]
 
 [flake8]
@@ -32,7 +37,7 @@ enabled = false
 [python]
 enable_resolves = true
 lockfile_generator = "pex"
-interpreter_constraints = ["CPython==3.10.*"]
+interpreter_constraints = ["CPython==3.9.*"]
 
 [python-infer]
 string_imports = true
