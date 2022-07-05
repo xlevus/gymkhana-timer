@@ -15,6 +15,9 @@ backend_packages = [
 
 pythonpath = ["%(buildroot)s/pants-plugins"]
 
+[cli.alias]
+plugin-debug = "--print-stacktrace --no-dynamic-ui"
+
 [source]
 root_patterns = [
     "src/python",
