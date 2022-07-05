@@ -41,8 +41,6 @@ async def package_upython_dir_image(field_set: UPythonFieldSet) -> BuiltPackage:
         BuiltPackageArtifact(output_prefix),
      ])
 
-    import pdb; pdb.set_trace()
-
 
 def rules():
     return [

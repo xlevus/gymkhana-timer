@@ -1,7 +1,15 @@
 import os
-from pants.engine.target import Target, COMMON_TARGET_FIELDS, Dependencies, AsyncFieldMixin, SecondaryOwnerMixin, Field
-from pants.source.filespec import Filespec
+
 from pants.core.goals.package import OutputPathField
+from pants.engine.target import (
+    COMMON_TARGET_FIELDS,
+    AsyncFieldMixin,
+    Dependencies,
+    Field,
+    SecondaryOwnerMixin,
+    Target,
+)
+from pants.source.filespec import Filespec
 
 
 class UPythonDependency(Target):
@@ -14,13 +22,10 @@ class UPythonDependency(Target):
     help = "A micropython dependency"
 
 
-
 class UPythonMainField(AsyncFieldMixin, SecondaryOwnerMixin, Field):
     alias = "upython_main"
     default = "main.py"
-    help = (
-        "Set which file to rename to 'main.py'."
-    )
+    help = "Set which file to rename to 'main.py'."
 
     @property
     def filespec(self) -> Filespec:
@@ -33,7 +38,6 @@ class UPythonSourcePackage(Target):
     core_fields = (
         *COMMON_TARGET_FIELDS,
         OutputPathField,
-        UPythonMainField,
         Dependencies,
     )
     help = "A micropython source package."

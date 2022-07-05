@@ -1,13 +1,13 @@
 import os
 
+from pants.engine.environment import Environment
 from pants.engine.rules import SubsystemRule
+from pants.option.option_types import StrListOption
 from pants.option.subsystem import Subsystem
 from pants.util.memo import memoized_method
-from pants.util.strutil import softwrap
-from pants.option.option_types import StrListOption
 from pants.util.ordered_set import OrderedSet
+from pants.util.strutil import softwrap
 
-from pants.engine.environment import Environment
 
 class UPythonSubsystem(Subsystem):
     options_scope = "micropython"
