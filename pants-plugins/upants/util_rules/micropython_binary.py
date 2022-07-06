@@ -17,13 +17,13 @@ class UPythonBinary(BinaryPath):
 
 
 @dataclass(frozen=True)
-class UpythonBinaryRequest:
+class UPythonBinaryRequest:
     pass
 
 
 @rule(desc="Finding `micropython` binary.")
 async def find_upython(
-    request: UpythonBinaryRequest, upython: UPythonSubsystem
+    request: UPythonBinaryRequest, upython: UPythonSubsystem
 ) -> UPythonBinary:
     env = await Get(Environment, EnvironmentRequest(["PATH"]))
     search_path = upython.executable_search_path(env)
@@ -40,6 +40,10 @@ async def find_upython(
 
     return UPythonBinary(first_path.path, first_path.fingerprint)
 
+
+@rule
+async def get_upython() -> UPythonBinary:
+    return await Get(UPythonBinary, UPythonBinaryRequest())
 
 def rules():
     return collect_rules()
