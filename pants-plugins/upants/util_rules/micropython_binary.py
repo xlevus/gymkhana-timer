@@ -29,7 +29,7 @@ async def find_upython(
     search_path = upython.executable_search_path(env)
 
     request = BinaryPathRequest(
-        binary_name="docker",
+        binary_name="micropython",
         search_path=search_path,
         test=BinaryPathTest(args=["-v"]),
     )

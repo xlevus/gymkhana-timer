@@ -1,4 +1,5 @@
 import os
+from typing import List
 
 from pants.core.goals.package import OutputPathField
 from pants.engine.target import (
@@ -8,8 +9,22 @@ from pants.engine.target import (
     Field,
     SecondaryOwnerMixin,
     Target,
+    BoolField,
+    StringSequenceField
 )
 from pants.source.filespec import Filespec
+from pants.backend.python.target_types import PythonSourceTarget
+
+
+class UPythonDependencySpecs(AsyncFieldMixin, StringSequenceField):
+    alias = "requirements"
+    requred = False
+    help="List of requirements."
+
+    def specs(self) -> List[str]:
+        if self.value is None:
+            return [self.address.target_name]
+        return self.value
 
 
 class UPythonDependency(Target):
@@ -18,8 +33,16 @@ class UPythonDependency(Target):
     core_fields = (
         *COMMON_TARGET_FIELDS,
         Dependencies,
+        UPythonDependencySpecs,
     )
     help = "A micropython dependency"
+
+
+class UPythonCompatibleField(BoolField):
+    alias = "upython_compatible"
+    help = "Is the python source upython compatible?"
+    required = False
+    default = True
 
 
 class UPythonMainField(AsyncFieldMixin, SecondaryOwnerMixin, Field):
@@ -37,7 +60,21 @@ class UPythonSourcePackage(Target):
     alias = "upython_directory_image"
     core_fields = (
         *COMMON_TARGET_FIELDS,
+        UPythonMainField,
         OutputPathField,
         Dependencies,
     )
     help = "A micropython source package."
+
+
+def target_types():
+    return [
+        UPythonDependency,
+        UPythonSourcePackage,
+    ]
+
+
+def rules():
+    return [
+        PythonSourceTarget.register_plugin_field(UPythonCompatibleField)
+    ]
