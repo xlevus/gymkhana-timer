@@ -1,25 +1,25 @@
 import os
 from typing import List
 
+from pants.backend.python.target_types import PythonSourceTarget
 from pants.core.goals.package import OutputPathField
 from pants.engine.target import (
     COMMON_TARGET_FIELDS,
     AsyncFieldMixin,
+    BoolField,
     Dependencies,
     Field,
     SecondaryOwnerMixin,
+    StringSequenceField,
     Target,
-    BoolField,
-    StringSequenceField
 )
 from pants.source.filespec import Filespec
-from pants.backend.python.target_types import PythonSourceTarget
 
 
 class UPythonDependencySpecs(AsyncFieldMixin, StringSequenceField):
     alias = "requirements"
     requred = False
-    help="List of requirements."
+    help = "List of requirements."
 
     def specs(self) -> List[str]:
         if self.value is None:
@@ -75,6 +75,4 @@ def target_types():
 
 
 def rules():
-    return [
-        PythonSourceTarget.register_plugin_field(UPythonCompatibleField)
-    ]
+    return [PythonSourceTarget.register_plugin_field(UPythonCompatibleField)]

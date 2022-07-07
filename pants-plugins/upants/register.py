@@ -1,7 +1,8 @@
 from upants import subsystem
-from upants.goals import package_directory_image
-from upants.util_rules import upip, micropython_binary
 from upants import target_types as targets
+from upants.goals import package_directory_image
+from upants.util_rules import micropython_binary, upip
+
 
 def rules():
     return (
@@ -14,6 +15,4 @@ def rules():
 
 
 def target_types():
-    return (
-        *targets.target_types(),
-    )
+    return (*targets.target_types(),)

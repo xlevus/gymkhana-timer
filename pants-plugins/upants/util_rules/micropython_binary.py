@@ -45,5 +45,6 @@ async def find_upython(
 async def get_upython() -> UPythonBinary:
     return await Get(UPythonBinary, UPythonBinaryRequest())
 
+
 def rules():
     return collect_rules()
