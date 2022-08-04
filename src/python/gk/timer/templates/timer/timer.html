@@ -31,7 +31,7 @@
             <i class="bi bi-play-fill"></i>
             {% trans "Start" %}
         </button>
-        <button id="stop" class="btn btn-lg btn-danger">
+        <button id="stop" class="btn btn-lg btn-danger visually-hidden">
             <i class="bi bi-stop-fill"></i>
             {% trans "Stop" %}
         </button>
@@ -49,7 +49,7 @@
 </div>
 
 
-<form action="." method="POST" style="visibility: hidden;" id="save_form">
+<form action="." method="POST" id="save_form" class="visually-hidden">
     {% csrf_token %}
     <input id="time_ms" name="time_ms" type="hidden">
     <input id="penalty_ms" name="penalty_ms" value="0" type="hidden">
@@ -85,8 +85,8 @@
 
     var time = document.getElementById('time');
     var penalties = document.getElementById('penalties');
-    var start = document.getElementById('start');
-    var stop = document.getElementById('stop');
+    var start_btn = document.getElementById('start');
+    var stop_btn = document.getElementById('stop');
     var time_field = document.getElementById("time_ms");
     var penalty_field = document.getElementById("penalty_ms");
     var form = document.getElementById("save_form");
@@ -119,20 +119,28 @@
         time.innerHTML = pad(minutes, 2) + ":" + pad(seconds, 2) + "." + pad(ms, 3);
     }
 
-    start.addEventListener("click", function (e) {
+    start_btn.addEventListener("click", function (e) {
         start = new Date();
         timer = setInterval(tick, 37);
-        form.style.visibility = "hidden";
+
+        form.classList.add("visually-hidden");
+        start_btn.classList.add("visually-hidden");
+        stop_btn.classList.remove("visually-hidden");
 
         noSleep.enable();
     });
 
-    stop.addEventListener("click", function (e) {
+    stop_btn.addEventListener("click", function (e) {
+        start_btn.classList.remove("visually-hidden");
+        stop_btn.classList.add("visually-hidden");
+
+
         if (timer) {
             timer = clearInterval(timer);
             tick();
             time_field.setAttribute("value", elapsed);
-            form.style.visibility = "visible";
+            form.classList.remove("visually-hidden");
+
             location.hash = '#save_form';
         }
         noSleep.disable();
