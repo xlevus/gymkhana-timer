@@ -6,3 +6,4 @@ django-registration
 django-bootstrap5
 django-allauth
 django-simple-menu
+whitenoise

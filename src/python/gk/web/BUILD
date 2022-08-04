@@ -1,6 +1,12 @@
+files(
+    name="static",
+    sources=["static/**/*"],
+)
+
 python_sources(
     name="src",
     dependencies=[
+        ":static",
         "src/python/gk/leaderboard",
         "src/python/gk/rider",
         "src/python/gk/timer",

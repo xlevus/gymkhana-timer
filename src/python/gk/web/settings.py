@@ -56,6 +56,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -93,6 +94,10 @@ WSGI_APPLICATION = "gk.django.wsgi.application"
 
 STATIC_ROOT = env("STATIC_ROOT", default=None)
 MEDIA_ROOT = env("MEDIA_ROOT", default=None)
+
+STATICFILES_DIRS = [
+    BASE_DIR / "web/static"
+]
 
 DATABASES = {"default": env.db_url("DATABASE_URL", "sqlite:///.data/db.sqlite")}
 
