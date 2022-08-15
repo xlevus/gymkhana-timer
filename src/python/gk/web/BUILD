@@ -1,4 +1,4 @@
-files(
+resources(
     name="static",
     sources=["static/**/*"],
 )
