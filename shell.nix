@@ -3,7 +3,7 @@
     # nativeBuildInputs is usually what you want -- tools you need to run
     nativeBuildInputs = with pkgs.buildPackages; [
         flyctl
-        docker
+        #docker
         python310
     ];
 }

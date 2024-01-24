@@ -1,7 +1,7 @@
 app = "leaderboard"
 
 [build]
-    image = "gk/web:latest"
+    image = "coneheads.org/web:latest"
 
 
 [env]

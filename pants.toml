@@ -38,7 +38,7 @@ string_imports = true
 
 
 [docker.registries.gk]
-address = "gk"
+address = "coneheads.org"
 default = true
 
 [docker]
