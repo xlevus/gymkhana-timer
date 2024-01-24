@@ -21,12 +21,12 @@ app = "leaderboard"
 
   [[services.ports]]
     handlers = ["http"]
-    port = "80"
+    port = 80
     force_https = true
 
   [[services.ports]]
     handlers = ["tls", "http"]
-    port = "443"
+    port = 443
 
   [[services.tcp_checks]]
     interval = 10000
