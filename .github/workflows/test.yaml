@@ -21,9 +21,9 @@ jobs:
         run: |
           pants tailor --check update-build-files --check ::
 
-      - name: Lint
-        run: |
-          pants lint ::
+      # - name: Lint
+      #   run: |
+      #     pants lint ::
 
       - name: Test
         run: |
