@@ -17,4 +17,4 @@ jobs:
           named-caches-hash: ${{ hashFiles('lockfiles/*.json', '**/something-else.lock') }}
 
       - name: Run Tests
-        run: "./pants test ::"
+        run: "pants test ::"
