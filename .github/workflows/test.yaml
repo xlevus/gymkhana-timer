@@ -40,15 +40,15 @@ jobs:
           name: pants-log
           path: .pants.d/pants.log
 
-    deploy:
-      runs-on: ubuntu-latest
-      environment: leaderboard.fly.dev
-      needs: test
-      steps:
-        - uses: superfly/flyctl-actions/setup-flyctl@master
-        - run: docker images
-        # - run: flyctl deploy --remote-only
-        #   env:
-        #     FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+  deploy:
+    runs-on: ubuntu-latest
+    environment: leaderboard.fly.dev
+    needs: test
+    steps:
+      - uses: superfly/flyctl-actions/setup-flyctl@master
+      - run: docker images
+      # - run: flyctl deploy --remote-only
+      #   env:
+      #     FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
 
-      
+    
