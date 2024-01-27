@@ -57,8 +57,6 @@ jobs:
           named-caches-hash: ${{ hashFiles('lockfiles/*.json', '**/something-else.lock') }}
           cache-lmdb-store: 'true'
 
-      - run: pants package src/docker::
-
       - uses: superfly/flyctl-actions/setup-flyctl@master
        - run: flyctl deploy --remote-only
          env:
