@@ -1,5 +1,5 @@
 name: Test
-on: [push, pull_request]
+on: [pull_request]
 env:
   PANTS_CONFIG_FILES: +['pants.ci.toml']
 jobs:
@@ -29,7 +29,7 @@ jobs:
         run: |
           pants test ::
 
-      - name: Package / Run
+      - name: Package
         run: |
           # We also smoke test that our release process will work by running `package`.
           pants package ::

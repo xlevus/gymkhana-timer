@@ -1,4 +1,4 @@
-from gk.logging import log, INFO
+from gk.logging import INFO, log
 
 
 class StateMachine:

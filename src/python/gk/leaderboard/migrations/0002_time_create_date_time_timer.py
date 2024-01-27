@@ -6,7 +6,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("timer", "0002_alter_timer_owner"),
         ("leaderboard", "0001_initial"),

@@ -1,8 +1,6 @@
 import network
 
-NETWORKS = {
-    "KTR": "3F@RedFoxes!"
-}
+NETWORKS = {"KTR": "3F@RedFoxes!"}
 
 
 def connect():
@@ -18,4 +16,3 @@ def connect():
             wlan.ifconfig()
 
             break
-

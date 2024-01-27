@@ -1,1 +1,1 @@
-PASS = 'timer'
+PASS = "timer"
