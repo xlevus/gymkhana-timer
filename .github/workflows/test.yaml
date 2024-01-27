@@ -4,6 +4,7 @@ env:
   PANTS_CONFIG_FILES: +['pants.ci.toml']
 jobs:
   test:
+    runs-on: ubuntu-latest
     steps:
       - name: Init Pyenv
         uses: pantsbuild/actions/pyenv@main
