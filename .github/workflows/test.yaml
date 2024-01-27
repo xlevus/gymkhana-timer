@@ -1,5 +1,5 @@
 name: Test
-on: [push]
+on: [push, pull_request]
 env:
   PANTS_CONFIG_FILES: +['pants.ci.toml']
 jobs:
@@ -15,9 +15,27 @@ jobs:
           # cache0 makes it easy to bust the cache if needed
           gha-cache-key: cache0-py${{ matrix.python_version }}
           named-caches-hash: ${{ hashFiles('lockfiles/*.json', '**/something-else.lock') }}
+          cache-lmdb-store: 'true'
 
-      - name: Run Tests
-        run: "pants test ::"
+      - name: Check BUILD files
+        run: |
+          pants tailor --check update-build-files --check ::
 
-      - name: Package
-        run: "pants package ::"
+      - name: Lint and typecheck
+        run: |
+          pants lint check ::
+
+      - name: Test
+        run: |
+          pants test ::
+
+      - name: Package / Run
+        run: |
+          # We also smoke test that our release process will work by running `package`.
+          pants package ::
+
+      - name: Upload pants log
+        uses: actions/upload-artifact@v3
+        with:
+          name: pants-log
+          path: .pants.d/pants.log
