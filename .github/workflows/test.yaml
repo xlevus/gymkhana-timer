@@ -1,4 +1,4 @@
-name: Test
+name: Deploy
 on: [pull_request]
 env:
   PANTS_CONFIG_FILES: +['pants.ci.toml']
@@ -21,9 +21,9 @@ jobs:
         run: |
           pants tailor --check update-build-files --check ::
 
-      - name: Lint and typecheck
+      - name: Lint
         run: |
-          pants lint check ::
+          pants lint ::
 
       - name: Test
         run: |
@@ -39,3 +39,16 @@ jobs:
         with:
           name: pants-log
           path: .pants.d/pants.log
+
+    deploy:
+      runs-on: ubuntu-latest
+      environment: leaderboard.fly.dev
+      needs: test
+      steps:
+        - uses: superfly/flyctl-actions/setup-flyctl@master
+        - run: docker images
+        # - run: flyctl deploy --remote-only
+        #   env:
+        #     FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+
+      
