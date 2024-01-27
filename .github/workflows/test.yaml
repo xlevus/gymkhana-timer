@@ -6,9 +6,6 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - name: Init Pyenv
-        uses: pantsbuild/actions/pyenv@main
-
       - name: Initialize Pants
         uses: pantsbuild/actions/init-pants@main
         with:
