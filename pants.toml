@@ -37,8 +37,8 @@ interpreter_constraints = ["CPython==3.10.*"]
 string_imports = true
 
 
-[docker.registries.gk]
-address = "coneheads.org"
+[docker.registries.ghcr]
+address = "ghcr.io/xlevus"
 default = true
 
 [docker]

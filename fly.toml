@@ -1,7 +1,7 @@
 app = "leaderboard"
 
 [build]
-    image = "coneheads.org/web:latest"
+    image = "ghcr.io/xlevus/web:latest"
 
 
 [env]
