@@ -38,7 +38,7 @@ string_imports = true
 
 
 [docker.registries.ghcr]
-address = "ghcr.io/xlevus"
+address = "ghcr.io/xlevus/gymkhana"
 default = true
 
 [docker]

@@ -1,7 +1,7 @@
 app = "leaderboard"
 
 [build]
-    image = "ghcr.io/xlevus/web:latest"
+    image = "ghcr.io/xlevus/gymkhana/web:latest"
 
 
 [env]
