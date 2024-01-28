@@ -33,6 +33,11 @@ jobs:
         run: |
           # We also smoke test that our release process will work by running `package`.
           pants package ::
+
+      - name: Log in to registry
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u $ --password-stdin
+      - name: Publish
+        run: |
           pants publish src/docker::
 
       - name: Upload pants log
