@@ -2,7 +2,7 @@ from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse
 from django.utils.translation import gettext as _
-from django.views.generic import UpdateView, DeleteView
+from django.views.generic import DeleteView, UpdateView
 from gk.rider import forms, models
 
 
@@ -34,10 +34,7 @@ class DeleteProfileView(LoginRequiredMixin, DeleteView):
         return self.request.user.times.count()
 
     def get_context_data(self, **kwargs):
-        return super().get_context_data(
-            time_count=self.get_time_count(),
-            **kwargs
-        )
+        return super().get_context_data(time_count=self.get_time_count(), **kwargs)
 
     def get_success_url(self) -> str:
         return reverse("index")

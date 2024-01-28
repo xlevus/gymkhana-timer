@@ -1,5 +1,5 @@
 [GLOBAL]
-pants_version = "2.12.0"
+pants_version = "2.18.0"
 
 backend_packages = [
     "pants.backend.docker",
@@ -31,15 +31,14 @@ enabled = false
 
 [python]
 enable_resolves = true
-lockfile_generator = "pex"
 interpreter_constraints = ["CPython==3.10.*"]
 
 [python-infer]
 string_imports = true
 
 
-[docker.registries.gk]
-address = "gk"
+[docker.registries.ghcr]
+address = "ghcr.io/xlevus/gymkhana"
 default = true
 
 [docker]

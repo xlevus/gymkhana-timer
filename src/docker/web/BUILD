@@ -6,5 +6,5 @@ docker_image(
         "src/python/gk/web:gunicorn",
         "src/python/gk/web:manage",
         ":entrypoint",
-    ]
+    ],
 )

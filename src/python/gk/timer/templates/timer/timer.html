@@ -59,7 +59,7 @@
             <h2>Save To:</h2>
             {% for rider in riders %}
             <button type="submit" name="rider" value="{{ rider.pk }}" class="btn btn-outline-primary btn-lg">
-                {{ rider.username }}
+                {{ rider.display_name }}
             </button>
             {% endfor %}
 

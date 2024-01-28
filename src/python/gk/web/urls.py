@@ -21,7 +21,11 @@ from gk.web import views as web
 urlpatterns = [
     path("", leaderboard.IndexView.as_view(), name="index"),
     path("rider/", include("gk.rider.urls")),
-    path("course/<slug:slug>/", leaderboard.CourseDetailView.as_view(), name="course-detail"),
+    path(
+        "course/<slug:slug>/",
+        leaderboard.CourseDetailView.as_view(),
+        name="course-detail",
+    ),
     path("timer/", include("gk.timer.urls")),
     path("admin/", admin.site.urls),
     path("tos/", web.TermsOfServiceView.as_view(), name="terms-of-service"),

@@ -3,5 +3,6 @@ python_requirements(
     module_mapping={
         "django-environ": ["environ"],
         "django-allauth": ["allauth"],
-    } 
+        "django-simple-menu": ["menu"],
+    },
 )

@@ -11,7 +11,6 @@ def forward(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("leaderboard", "0002_time_create_date_time_timer"),
     ]

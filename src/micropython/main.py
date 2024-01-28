@@ -1,10 +1,10 @@
-import uasyncio
 import time
-from machine import Pin, SPI, ADC, Timer
 
+import uasyncio
 from gk import logging
 from gk.display import DigitDisplay
-from gk.fsm import StateMachine, State
+from gk.fsm import State, StateMachine
+from machine import ADC, SPI, Pin, Timer
 
 spi = SPI(1, baudrate=10_000)
 
@@ -33,7 +33,7 @@ class Init(State):
         GREEN_LED.off()
         RED_LED.on()
 
-        display.write('coneheads')
+        display.write("coneheads")
         await uasyncio.sleep(5)
 
         await self.machine.change(Ready())
@@ -48,7 +48,7 @@ def gate_closed():
 
 
 def show_ms(display: DigitDisplay, ms: int):
-    seconds = ms//1000
+    seconds = ms // 1000
     millis = ms % 1000
 
     txt = "%3d.%0.3d" % (seconds, millis)
@@ -77,7 +77,7 @@ class TriggeredWait(State):
     async def tick(self):
         curr_ms = time.ticks_ms()
 
-        if  time.ticks_diff(curr_ms, self.start_ms) < 500:
+        if time.ticks_diff(curr_ms, self.start_ms) < 500:
             if gate_closed():
                 pass
             else:
@@ -97,7 +97,6 @@ class Timing(State):
 
     async def tick(self, curr_ms=None):
         curr_ms = curr_ms or time.ticks_ms()
-
 
         if gate_closed() and time.ticks_diff(curr_ms, self.start_ms) > 5000:
             return TimingEnd(self.start_ms, curr_ms)
@@ -119,7 +118,7 @@ class TimingEnd(State):
     async def tick(self):
         curr_ms = time.ticks_ms()
 
-        if  time.ticks_diff(curr_ms, self.end_ms) < 500:
+        if time.ticks_diff(curr_ms, self.end_ms) < 500:
             if gate_closed():
                 pass
             else:
