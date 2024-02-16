@@ -50,7 +50,7 @@ INSTALLED_APPS = [
     "allauth.socialaccount",
     "allauth.socialaccount.providers.facebook",
     "django_bootstrap5",
-    "menu",
+    "simple_menu",
 ]
 
 
