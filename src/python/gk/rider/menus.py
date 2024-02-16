@@ -1,7 +1,7 @@
 from typing import TYPE_CHECKING
 
 from django.urls import reverse
-from menu import Menu, MenuItem
+from simple_menu import Menu, MenuItem
 
 if TYPE_CHECKING:
     from django.http import HttpRequest
