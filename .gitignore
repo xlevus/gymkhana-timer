@@ -1,6 +1,7 @@
 /.pants.*
 /dist/
 /.pids
+pants.local.toml
 
 secrets
 

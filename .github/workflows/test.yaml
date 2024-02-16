@@ -1,7 +1,14 @@
 name: Deploy
-on: [pull_request]
+
+on: 
+  pull_request: {}
+  push:
+    branches:
+      - main
+
 env:
   PANTS_CONFIG_FILES: +['pants.ci.toml']
+
 jobs:
   test:
     runs-on: ubuntu-latest
