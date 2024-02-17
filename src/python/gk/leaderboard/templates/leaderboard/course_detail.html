@@ -1,14 +1,15 @@
 {% extends "base.html" %}
 {% load i18n %}
 
-{% block head_title %}{{ course }} | {{ block.super }}{% endblock %}
+{% block head_title %}{% if course.series %}{{ course.series }} - {% endif %}{{ course }} | {{ block.super }}{% endblock %}
 
 {% block main %}
 
 <h1>
+    {% if course.series %}{{ course.series }} - {% endif %}
     {{ course }}
     {% if user.is_authenticated %}
-    <a class="btn btn-outline-success btn-lg float-end" href="{% url 'course_timer' slug=course.slug %}">
+    <a class="btn btn-outline-success btn-lg float-end" href="{{ course.timer_url }}">
         {% trans "Timer" %}
     </a>
     {% endif %}

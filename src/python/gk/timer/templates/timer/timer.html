@@ -13,7 +13,7 @@
 {% block main %}
 
 <h1>
-    <a class="text-reset text-decoration-none" href="{% url 'course-detail' slug=course.slug %}">
+    <a class="text-reset text-decoration-none" href="{{ object.url }}">
         {% blocktrans %}Timer: {{ object }}{% endblocktrans %}
     </a>
 </h1>
@@ -79,6 +79,12 @@
         </div>
     </div>
 </form>
+
+{% comment %}
+<div class="row">
+    {{ timer }} #{{ timer.id }} : {{ timer.owner }}
+</div>
+{% endcomment %}
 
 <script type="application/javascript">
     var noSleep = new NoSleep();

@@ -21,6 +21,19 @@ class TimerView(LoginRequiredMixin, DetailView):
     model = Course
     template_name = "timer/timer.html"
 
+    def get_queryset(self):
+        return (
+            super().get_queryset().filter(series__slug=self.kwargs.get("course_slug"))
+        )
+
+    def get_context_data(self, **kwargs):
+        return super().get_context_data(
+            timer=self.get_timer(),
+            names=self.get_rider_names(),
+            riders=self.get_riders(),
+            **kwargs
+        )
+
     def get_riders(self):
         return Rider.objects.all()
 
@@ -30,11 +43,6 @@ class TimerView(LoginRequiredMixin, DetailView):
             .exclude(rider_name="")
             .values("rider_name")
             .distinct()
-        )
-
-    def get_context_data(self, **kwargs):
-        return super().get_context_data(
-            names=self.get_rider_names(), riders=self.get_riders(), **kwargs
         )
 
     def get_timer(self) -> Timer:

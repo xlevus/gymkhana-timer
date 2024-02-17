@@ -1,4 +1,4 @@
-from collections import defaultdict
+from collections import OrderedDict, defaultdict
 
 from django.db.models import F, Window
 from django.db.models.functions import RowNumber
@@ -12,9 +12,17 @@ class IndexView(TemplateView):
     template_name = "index.html"
 
     def times(self):
-        for course in models.Course.objects.all():
+        series = OrderedDict({None: []})
+
+        for course in models.Course.objects.all().select_related("series"):
             qs = course.best_times()[:5]
-            yield (course, qs)
+
+            series.setdefault(course.series, []).append((course, qs))
+
+        return series
+
+    def series(self):
+        return models.Series.objects.all().order_by()
 
     def get_context_data(self, **kwargs):
         return super().get_context_data(times=self.times(), **kwargs)
@@ -33,4 +41,9 @@ class CourseDetailView(DetailView):
     def get_context_data(self, **kwargs):
         return super().get_context_data(
             history=self.history(), best_times=self.best_times(), **kwargs
+        )
+
+    def get_queryset(self):
+        return (
+            super().get_queryset().filter(series__slug=self.kwargs.get("series_slug"))
         )

@@ -22,6 +22,11 @@ urlpatterns = [
     path("", leaderboard.IndexView.as_view(), name="index"),
     path("rider/", include("gk.rider.urls")),
     path(
+        "series/<slug:series_slug>/course/<slug:slug>/",
+        leaderboard.CourseDetailView.as_view(),
+        name="course-detail",
+    ),
+    path(
         "course/<slug:slug>/",
         leaderboard.CourseDetailView.as_view(),
         name="course-detail",
