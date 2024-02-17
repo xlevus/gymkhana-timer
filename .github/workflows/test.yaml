@@ -42,11 +42,11 @@ jobs:
           pants package ::
 
       - name: Log in to registry
-        if: github.head_ref == 'main'
+        if: github.ref_name == 'main'
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u $ --password-stdin
 
       - name: Publish
-        if: github.head_ref == 'main'
+        if: github.ref_name == 'main'
         run: |
           pants publish src/docker::
 
@@ -57,7 +57,7 @@ jobs:
           path: .pants.d/pants.log
 
   deploy:
-    if: github.head_ref == 'main'
+    if: github.ref_name == 'main'
     runs-on: ubuntu-latest
     environment: leaderboard.fly.dev
     needs: test
