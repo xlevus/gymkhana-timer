@@ -23,7 +23,7 @@ class TimerView(LoginRequiredMixin, DetailView):
 
     def get_queryset(self):
         return (
-            super().get_queryset().filter(series__slug=self.kwargs.get("course_slug"))
+            super().get_queryset().filter(series__slug=self.kwargs.get("series_slug"))
         )
 
     def get_context_data(self, **kwargs):
