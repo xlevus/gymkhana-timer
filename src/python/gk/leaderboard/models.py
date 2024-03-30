@@ -45,7 +45,7 @@ class Course(models.Model):
         ]
 
     def __str__(self):
-        return self.name
+        return f"{self.series}/{self.name}" if self.series else self.name
 
     def best_times(self):
         ranks = [

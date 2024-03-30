@@ -14,6 +14,7 @@ class SeriesAdmin(admin.ModelAdmin):
 
 class CourseAdmin(admin.ModelAdmin):
     fields = ["name", "slug", "series"]
+    list_filter = ["series"]
     list_display = ("name", "slug", "series", "create_date", "modify_date")
 
     prepopulated_fields = {
@@ -22,6 +23,23 @@ class CourseAdmin(admin.ModelAdmin):
 
 
 class TimeAdmin(admin.ModelAdmin):
+    date_hierarchy = "run_date"
+    fieldsets = [
+        (
+            None,
+            {
+                "fields": ["course", "run_date", "video_url"],
+            },
+        ),
+        (
+            "Rider",
+            {
+                "fields": ["rider", "rider_name", "bike"],
+            },
+        ),
+        ("Time", {"fields": ["time_ms", "penalty_ms"]}),
+    ]
+    list_filter = ["course", "rider", "timer"]
     list_display = (
         "course",
         "rider",
