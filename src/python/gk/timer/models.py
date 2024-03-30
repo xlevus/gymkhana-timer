@@ -17,7 +17,7 @@ class Timer(models.Model):
     created = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.name
+        return f"{self.owner}: {self.name}" if self.owner else self.name
 
     def save(self, *args, **kwargs):
         if not self.secret:
