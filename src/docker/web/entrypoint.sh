@@ -9,5 +9,9 @@ fi
 echo "Migrating"
 /manage.pex migrate --no-input
 
+if [ -z "$STATIC_ROOT" ]; then
+    /manage.pex collectstatic
+fi
+
 echo "Running"
 exec /gunicorn.pex
