@@ -13,7 +13,10 @@ class SeriesAdmin(admin.ModelAdmin):
 
 
 class CourseAdmin(admin.ModelAdmin):
-    fields = ["name", "slug", "series"]
+    fieldsets = [
+        (None, {"fields": ["name", "slug", "series"]}),
+        ("Images", {"fields": ["layout_image", "route_image"]}),
+    ]
     list_filter = ["series"]
     list_display = ("name", "slug", "series", "create_date", "modify_date")
 

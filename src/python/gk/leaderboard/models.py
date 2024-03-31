@@ -1,3 +1,5 @@
+import os.path
+
 from django.conf import settings
 from django.db import models
 from django.db.models import F, Window
@@ -25,6 +27,14 @@ class Series(models.Model):
         return True
 
 
+def _layout_path(i, f):
+    return f"{i._file_root()}/layout{os.path.splitext(f)[1]}"
+
+
+def _route_path(i, f):
+    return f"{i._file_root()}/route{os.path.splitext(f)[1]}"
+
+
 class Course(models.Model):
     name = models.CharField(max_length=50)
     slug = models.SlugField()
@@ -33,6 +43,9 @@ class Course(models.Model):
 
     create_date = models.DateField(auto_now_add=True)
     modify_date = models.DateTimeField(auto_now=True)
+
+    layout_image = models.FileField(blank=True, null=True, upload_to=_layout_path)
+    route_image = models.FileField(blank=True, null=True, upload_to=_route_path)
 
     class Meta:
         unique_together = [
@@ -43,6 +56,9 @@ class Course(models.Model):
             F("series__create_date").desc(),
             F("create_date").desc(),
         ]
+
+    def _file_root(self):
+        return f"course/{self.series.slug if self.series else '_'}/{self.slug}"
 
     def __str__(self):
         return f"{self.series}/{self.name}" if self.series else self.name

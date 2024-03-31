@@ -94,7 +94,8 @@ TEMPLATES = [
 WSGI_APPLICATION = "gk.django.wsgi.application"
 
 STATIC_ROOT = env("STATIC_ROOT", default=None)
-MEDIA_ROOT = env("MEDIA_ROOT", default=None)
+MEDIA_ROOT = env("MEDIA_ROOT", default=".data/media/")
+MEDIA_URL = env("MEDIA_URL", default="/media/")
 
 STATICFILES_DIRS = [BASE_DIR / "web/static"]
 
