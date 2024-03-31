@@ -1,0 +1,67 @@
+---
+- name: Docker
+  hosts: 
+   - webservers
+  roles: 
+   # - geerlingguy.docker
+
+- name: Setup
+  hosts:
+    - webservers
+  tasks:
+    - name: Caddy Dir
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+        mode: 0700
+      with_items: 
+        - /etc/caddy
+        - /var/web
+        - /var/web/media
+        - /var/web/static
+
+    - name: Caddyfile
+      ansible.builtin.template:
+        src: Caddyfile.j2
+        dest: /etc/caddy/Caddyfile
+
+    - name: Network
+      community.docker.docker_network:
+        name: web
+        
+    - name: Run Caddy
+      community.docker.docker_container:
+        name: caddy
+        image: caddy:latest
+        state: started
+        restart: true
+        restart_policy: always
+        pull: always
+        networks: 
+          - name: web
+        ports:
+          - "80:80"
+          - "443:443"
+          - "443:443/udp"
+        volumes:
+          - "/etc/caddy:/etc/caddy"
+          - "/var/web/media:/var/web/media"
+
+    - name: Run App
+      community.docker.docker_container:
+        name: web
+        image: ghcr.io/xlevus/gymkhana/web:latest
+        state: started
+        # pull: always
+        restart: true
+        volumes:
+          - "/var/web:/var/web"
+        networks: 
+          - name: web
+        env:
+          DEBUG: "False"
+          ALLOWED_HOSTS: "srv501663.hstgr.cloud,leaderboard.coneheads.org"
+          CSRF_TRUSTED_ORIGINS: "https://srv501663.hstgr.cloud,https://leaderboard.coneheads.org"
+          DATABASE_URL: "sqlite:///var/web/db.sqlite"
+          SECRET_KEY: ""
+

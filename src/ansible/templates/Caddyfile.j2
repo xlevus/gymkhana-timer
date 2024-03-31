@@ -1,0 +1,9 @@
+srv501663.hstgr.cloud, leaderboard.coneheads.org {
+    root * /var/web
+    route {
+        file_server /media/*
+        file_server /static/*
+
+        reverse_proxy web:8080
+    }
+}

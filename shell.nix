@@ -5,5 +5,7 @@
         flyctl
         #docker
         python310
+        ansible
+        glibcLocales
     ];
 }
