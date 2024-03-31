@@ -14,12 +14,13 @@ if [ -z "$DATABASE_URL" ]; then
     exit 1
 fi
 
-echo "Migrating"
-/manage.pex migrate --no-input
-
 if [ -z "$STATIC_ROOT" ]; then
+    echo "Collecting Static"
     /manage.pex collectstatic
 fi
+
+echo "Migrating"
+/manage.pex migrate --no-input
 
 echo "Running"
 exec /gunicorn.pex
