@@ -74,6 +74,6 @@ jobs:
           vault_password: ${{secrets.VAULT_PASSWORD}}
           inventory: |
             [webservers]
-            srv501663.hstgr.cloud
+            srv501663.hstgr.cloud ansible_user=root
           known_hosts: |
             srv501663.hstgr.cloud ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBARIuGrJyMNtdJdoRnUxPhPMYcvNQkcb5CxCXGc5I3mUv7akdlIxAX1Bz6vMmMBAU8iPtCI//T3L9aIzt7WPAwM=
