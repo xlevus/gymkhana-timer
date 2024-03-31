@@ -57,7 +57,7 @@ jobs:
           path: .pants.d/pants.log
 
   deploy:
-    if: github.ref_name == 'main'
+    # if: github.ref_name == 'main'
     runs-on: ubuntu-latest
     environment: leaderboard.fly.dev
     needs: test
@@ -65,8 +65,15 @@ jobs:
       - name: Check out repository code
         uses: actions/checkout@v4
 
-      - uses: superfly/flyctl-actions/setup-flyctl@master
-
-      - run: flyctl deploy --remote-only
-        env:
-          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+      - name: Run Playbook
+        uses: dawidd6/action-ansible-playbook@v2
+        with:
+          playbook: src/ansible/playbook.yaml
+          requirements: src/ansible/requirements.yaml
+          key: ${{secrets.SSH_PRIVATE_KEY}}
+          vault_password: ${{secrets.VAULT_PASSWORD}}
+          inventory: |
+            [webservers]
+            srv501663.hstgr.cloud
+          known_hosts: |
+            srv501663.hstgr.cloud ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBARIuGrJyMNtdJdoRnUxPhPMYcvNQkcb5CxCXGc5I3mUv7akdlIxAX1Bz6vMmMBAU8iPtCI//T3L9aIzt7WPAwM=
