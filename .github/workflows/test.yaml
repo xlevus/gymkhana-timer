@@ -42,11 +42,11 @@ jobs:
           pants package ::
 
       - name: Log in to registry
-        #if: github.ref_name == 'main'
+        if: github.ref_name == 'main'
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u $ --password-stdin
 
       - name: Publish
-        #if: github.ref_name == 'main'
+        if: github.ref_name == 'main'
         run: |
           pants publish src/docker::
 
