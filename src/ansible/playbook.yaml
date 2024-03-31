@@ -63,7 +63,7 @@
         name: web
         image: ghcr.io/xlevus/gymkhana/web:latest
         state: started
-        # pull: always
+        pull: always
         restart: true
         volumes:
           - "/etc/gk/web.SECRET_KEY:/etc/SECRET_KEY"
