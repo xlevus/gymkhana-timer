@@ -16,7 +16,7 @@ fi
 
 if [ -d "$STATIC_ROOT" ]; then
     echo "Collecting Static"
-    /manage.pex collectstatic
+    /manage.pex collectstatic --noinput
 fi
 
 echo "Migrating"
