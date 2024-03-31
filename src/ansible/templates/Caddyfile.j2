@@ -1,0 +1,20 @@
+srv501663.hstgr.cloud, leaderboard.coneheads.org {
+    log {
+        output stdout
+    }
+
+    handle /static/* {
+        root * /var/gk/web
+        file_server
+    }
+
+    handle /media/* {
+        root * /var/gk/web
+        file_server
+    }
+
+    handle {
+        reverse_proxy web:8080
+    }
+
+}
