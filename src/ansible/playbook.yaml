@@ -26,6 +26,7 @@
         src: "{{ item.src }}"
         dest: "{{ item.dst }}"
         mode: 0600
+        decrypt: true
       with_items:
         - {src: web.SECRET_KEY, dst: /etc/gk/web.SECRET_KEY}
 
