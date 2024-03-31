@@ -14,7 +14,7 @@ if [ -z "$DATABASE_URL" ]; then
     exit 1
 fi
 
-if [ -z "$STATIC_ROOT" ]; then
+if [ -d "$STATIC_ROOT" ]; then
     echo "Collecting Static"
     /manage.pex collectstatic
 fi
