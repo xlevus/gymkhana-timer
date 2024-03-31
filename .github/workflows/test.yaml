@@ -57,7 +57,7 @@ jobs:
           path: .pants.d/pants.log
 
   deploy:
-    # if: github.ref_name == 'main'
+    if: github.ref_name == 'main'
     runs-on: ubuntu-latest
     environment: srv501663.hstgr.cloud
     needs: test

@@ -77,8 +77,3 @@
           DATABASE_URL: "sqlite:///data/db.sqlite"
           SECRET_KEY_FILE: "/etc/SECRET_KEY"
           STATIC_ROOT: "/data/static"
-
-    - name: Remove old images
-      community.docker.docker_image_remove:
-        prune: true
-
