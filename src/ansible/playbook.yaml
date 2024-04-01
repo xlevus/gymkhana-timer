@@ -77,3 +77,5 @@
           DATABASE_URL: "sqlite:///data/db.sqlite"
           SECRET_KEY_FILE: "/etc/SECRET_KEY"
           STATIC_ROOT: "/data/static"
+          MEDIA_ROOT: "/data/media"
+          MEDIA_URL: "/media/"
