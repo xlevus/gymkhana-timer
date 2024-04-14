@@ -77,13 +77,12 @@ class Lap(State):
         GREEN_LED.off()
 
     async def tick(self):
-        if LASER_PIN.value() == 0:
+        value = LASER_PIN.value
+        if value() == 0:
             end_time = time.ticks_ms()
             await uasyncio.sleep_ms(2)
-            if LASER_PIN.value() == 0:
+            if value() == 0:
                 return EndLap(self.start_time, end_time)
-
-
 
 
 class EndLap(State):
