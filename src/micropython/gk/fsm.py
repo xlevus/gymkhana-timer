@@ -17,6 +17,7 @@ class StateMachine:
         next_state.init(self)
         self.state = next_state
         log(INFO, f"Entering state {self.state}")
+
         await self.state.enter()
 
     async def tick(self):
@@ -32,7 +33,7 @@ class State:
     def __repr__(self):
         return self.__class__.__name__
 
-    async def enter(self):
+    async def enter(self, **kwargs):
         pass
 
     async def exit(self):
