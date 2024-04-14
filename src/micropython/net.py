@@ -1,4 +1,6 @@
-def do_connect():
+import mqtt_as
+
+def configure_mqtt():
     import network
     import json
 
@@ -10,23 +12,12 @@ def do_connect():
     except OSError:
         return None
 
-    if not wlan.isconnected():
-        available_networks = {x[0].decode() for x in wlan.scan()}
-        print(available_networks)
+    available_networks = {x[0].decode() for x in wlan.scan()}
 
-        for row in defined_networks:
-            print(row)
-            if row['ssid'] in available_networks:
-                wlan.connect(row['ssid'], row['key'])
-                print('connecting to network...')
-
-                while not wlan.isconnected():
-                    pass
-
-                return (wlan, row['mqtt'])
-
-    else:
-        ssid = wlan.config("ssid")
-        for row in defined_networks:
-            if row['ssid'] in available_networks:
-                return (wlan, row['mqtt'])
+    for row in defined_networks:
+        if row['ssid'] in available_networks:
+            print(f"Network: {row['ssid']}")
+            mqtt_as.config['ssid'] = row['ssid']
+            mqtt_as.config['wifi_pw'] = row['key']
+            mqtt_as.config['server'] = row['mqtt']
+            return

@@ -1,3 +1,4 @@
+import gc
 from gk.logging import INFO, log
 
 
@@ -13,6 +14,8 @@ class StateMachine:
         if self.state is not None:
             log(INFO, f"Exiting state {self.state}")
             await self.state.exit()
+            del self.state
+            gc.collect()
 
         next_state.init(self)
         self.state = next_state

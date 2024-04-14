@@ -1,11 +1,13 @@
 import time
-
+import gc
+import json
+import net
+import mqtt_as
 import uasyncio
 from gk import logging
 from gk.fsm import State, StateMachine
 from machine import Pin
 import machine
-from vl53l1x import VL53L1X
 
 
 RED_LED = Pin(0, Pin.OUT, Pin.DRIVE_1)
@@ -16,10 +18,18 @@ LASER_PIN = Pin(2, Pin.IN)
 logging.enable()
 
 
+def message(mqtt, event, **kwargs):
+    return mqtt.publish("gk-timer", json.dumps(dict(
+        event=event,
+        **kwargs
+    )))
+
+
 class Init(State):
     async def enter(self):
-        GREEN_LED.off()
+        bit = True
         RED_LED.on()
+        GREEN_LED.on()
 
     async def tick(self):
         return Calibrate()
@@ -27,6 +37,7 @@ class Init(State):
 
 class Calibrate(State):
     async def enter(self):
+        await message(self.machine.mqtt, 'calibrating')
         counts = 10
         await uasyncio.sleep_ms(100)
 
@@ -56,6 +67,7 @@ class Ready(State):
     async def enter(self):
         RED_LED.off()
         GREEN_LED.on()
+        await message(self.machine.mqtt, 'ready')
 
     async def tick(self):
         if LASER_PIN.value() == 0:
@@ -68,10 +80,13 @@ class Ready(State):
 class Lap(State):
     def __init__(self, start_time):
         self.start_time = start_time
+        self.ticker = None
 
     async def enter(self):
         RED_LED.on()
         GREEN_LED.on()
+        #self.ticker = uasyncio.create_task(self.update())
+        await message(self.machine.mqtt, 'lap_start', start_ticks=self.start_time)
         await uasyncio.sleep(10)
         logging.log(logging.DEBUG, f"Debounce block ended")
         GREEN_LED.off()
@@ -84,11 +99,29 @@ class Lap(State):
             if value() == 0:
                 return EndLap(self.start_time, end_time)
 
+    async def exit(self):
+        #self.ticker.cancel()
+        pass
+
+    async def update(self):
+        try:
+            while True:
+                await uasyncio.sleep(2)
+                duration = time.ticks_diff(time.ticks_ms(), self.start_time)
+                await message(self.machine.mqtt, "lap", start_ticks=self.start_time, duration=duration)
+        except uasyncio.CancelledError:
+            pass
+
 
 class EndLap(State):
     def __init__(self, start_time, end_time):
-        duration = time.ticks_diff(end_time, start_time)
-        logging.log(logging.INFO, f"LAP: {duration} (S:{start_time} E:{end_time})")
+        self.start_time = start_time
+        self.end_time = end_time
+        self.duration = time.ticks_diff(end_time, start_time)
+        logging.log(logging.INFO, f"LAP: {self.duration} (S:{start_time} E:{end_time})")
+
+    async def enter(self):
+        await message(self.machine.mqtt, 'lap_end', start_ticks=self.start_time, end_ticks=self.end_time, duration=self.duration)
 
     async def tick(self):
         return Calibrate()
@@ -98,12 +131,12 @@ async def main():
     tasks = []
 
     try:
-        #i2c = machine.I2C(0, scl=Pin(9), sda=Pin(8))
-        #distance = VL53L1X(i2c)
+        mqtt_as.MQTTClient.DEBUG = True
+        mqtt = mqtt_as.MQTTClient(mqtt_as.config)
+        await mqtt.connect()
 
         sm = StateMachine(
-            #i2c=i2c,
-            #distance=distance,
+            mqtt=mqtt,
         )
 
         await sm.change(Init())
@@ -117,6 +150,9 @@ async def main():
 
 
 def run():
+    net.configure_mqtt()
+    gc.collect()
+
     uasyncio.run(main())
 
 #run()
