@@ -10,5 +10,6 @@
         esptool
         mpy-utils
         picocom
+        mpremote
     ];
 }

@@ -14,7 +14,6 @@ backend_packages = [
 [source]
 root_patterns = [
     "/src/python",
-    "/src/micropython",
 ]
 
 [flake8]

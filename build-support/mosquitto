@@ -1,0 +1,8 @@
+#!/bin/bash
+
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+
+exec podman run --name mqtt \
+    --rm \
+    -v "${SCRIPT_DIR}/mosquitto.conf:/mosquitto/config/mosquitto.conf:z" \
+    -p 1883:1883 -p 9001:9001 eclipse-mosquitto
