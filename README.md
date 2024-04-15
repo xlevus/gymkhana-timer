@@ -24,23 +24,24 @@ TBC.
 
 ### Flashing
 
-1. Install dependencies
+1. Flash board with micropython
    ```bash
-   pip install -r requirements-dev.txt
+   cd src/micropython/timer
+   make reflash
    ```
    
-2. Set Environment
-    ```bash
-    export AMPY_PORT=/dev/ttyUSB0
-    export AMPY_BAUD=115200
-    ```
+2. Upload source
+  ```bash
+  make sync
+  ```
 
-3. Flash ESP32 with esptool:
-    ```bash
-    esptool.py --chip esp32 --port $AMPY_PORT --baud 460800 write_flash -z 0x1000 firmware/esp32-20220117-v1.18.bin
-    ```
+3. Edit wifi config
+  ```
+  mpremote edit wifi.json
+  ```
 
-4. Upload source:
-    ```bash
-    ./upload.sh
-    ```
+  ```
+  [
+    {"ssid": "YOUR_SSID", "key": "WIFI PASSWORD", "mqtt": "mqtt.server.here"}
+  ]
+  ```
