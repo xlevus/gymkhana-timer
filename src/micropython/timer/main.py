@@ -1,3 +1,3 @@
 from timer import run
 
-run()
+# run()
