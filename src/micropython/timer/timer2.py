@@ -83,6 +83,37 @@ class Tripwire:
 
 
 
+import struct
+
+class Lidar:
+    def __init__(self, uart: machine.UART):
+        self._uart = uart
+
+    def _write(self, cmd: int, format: str, *nums):
+        msg = struct.pack(format+'x', *nums)
+        self._uart.write(
+            struct.pack("<bb", cmd, len(msg) + 2)
+        )
+        self._uart.write(msg)
+
+    def enable_output(self, on: bool = True):
+        self._write(0x07, int(on).to_bytes())
+
+    IRQ_MODE_DISABLE = 0x00
+    IRQ_MODE_HIGH = 0x01
+    IRQ_MODE_LOW = 0x02
+
+    def irq_mode(self, mode: int, distance_cm: int, zone_cm: int, delay1_ms: int, delay2_ms: int):
+        self._write(
+            0x3b,
+            mode.to_bytes(1, "little") +
+            distance_cm.to_bytes(2, "little") +
+            zone_cm.to_bytes(2, "little") +
+            delay1_ms.to_bytes(2, "little") +
+            delay2_ms.to_byte2(2, "little")
+        )
+
+
 @state
 async def Init(display, **_):
     RED_LED.off()
@@ -94,6 +125,7 @@ async def Init(display, **_):
 
 @state
 async def InitLidar(**_):
+
     slaves = set()
 
     while LIDAR_ADDR not in slaves:
