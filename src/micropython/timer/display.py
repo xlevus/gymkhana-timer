@@ -128,6 +128,7 @@ class DigitDisplay:
             self._write_register(i + 1, 0)
 
     def write(self, text):
+        text = text + '        '
         text = text[:8]
         pos = 0
 

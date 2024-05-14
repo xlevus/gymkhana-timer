@@ -3,8 +3,13 @@ import json
 import network
 import ubinascii
 
+import logging
+
 
 class NullMQTT:
+    def __init__(self):
+        logging.warning(f"Using NullMQTT")
+
     async def connect(self):
         pass
 
@@ -13,6 +18,7 @@ class NullMQTT:
 
 
 def configure_mqtt():
+    logging.debug("Configuring MQTT")
 
     wlan = network.WLAN(network.STA_IF)
     wlan.active(True)
@@ -24,11 +30,11 @@ def configure_mqtt():
 
         for row in defined_networks:
             if row['ssid'] in available_networks:
-                print(f"Network: {row['ssid']}")
-                mqtt_as.config['ssid'] = row['ssid']
-                mqtt_as.config['wifi_pw'] = row['key']
-                mqtt_as.config['server'] = row['mqtt']
+                logging.info(f"Connecting to network: {row['ssid']}")
+                mqtt_as.config.update(row)
                 return mqtt_as.MQTTClient(mqtt_as.config)
+            else:
+                logging.info(f"Could not find network: {row['ssid']}")
 
     except OSError:
         pass

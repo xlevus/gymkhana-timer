@@ -1,3 +1,3 @@
-from timer import run
+from timer2 import run
 
 # run()
