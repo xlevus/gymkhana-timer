@@ -24,12 +24,19 @@ class TfLuna:
         self.amplitude = None
         self.temp = None
 
-        uasyncio.create_task(self._run())
         self._die = uasyncio.Event()
+        self._running = uasyncio.Lock()
 
         self._cmdlock = uasyncio.Lock() 
         self._cmdset = uasyncio.Event()
         self._cmdresult = None
+
+    async def __aenter__(self):
+        self.start()
+        return self
+
+    async def __aexit__(self, _, __, ___):
+        self.stop()
 
     async def _write(self, command: int, format: str, *values, resp_format=None):
         await self._cmdlock.acquire()
@@ -51,6 +58,20 @@ class TfLuna:
             self._cmdresult = None
 
     async def _run(self):
+        try:
+            await uasyncio.wait_for_ms(self._running.acquire(), 1)
+            logger.debug("Lock Acquired")
+            try:
+                await self.__run()
+            finally:
+                self._running.release()
+                logger.debug("Releasing Lock")
+        except uasyncio.TimeoutError:
+            logger.debug("Already Running")
+            pass
+
+    async def __run(self):
+        await self._sreader.drain()
         while not self._die.is_set():
             header = await self._sreader.read(2)
 
@@ -74,8 +95,12 @@ class TfLuna:
                 logger.debug(f"Wat? {header!r}")
 
         logger.debug("Run DIE")
+
+    def start(self):
+        self._die.clear()
+        uasyncio.create_task(self._run())
     
-    async def stop(self):
+    def stop(self):
         self._die.set()
 
     async def output_enable(self, enable: bool = True):
@@ -84,9 +109,11 @@ class TfLuna:
         )
 
     async def soft_reset(self):
+        logger.debug("Soft Reset")
         await self._write(self._ID_SOFT_RESET, "", wait_for_resp=False)
 
     async def set_output_frequency(self, frequency_hz: int):
+        logger.debug(f"Setting Output Frequency to : {frequency_hz}")
         await self._write(self._ID_SAMPLE_FREQ, "<H", frequency_hz, resp_format="<bx")
 
     async def restore_defaults(self):
@@ -108,7 +135,8 @@ class TfLuna:
         NOTE: The IRQ pin will only ever trigger every one `output_frequency` cycle. Disabling
         the output or setting the output_frequency to 0 will disable the IRQ pin.
         """
-        await self._write(
+        logger.debug(f"Entering IRQ Mode: {distance_cm}+={zone_cm} cm; {delay1_ms}/{delay2_ms} ms")
+        resp = await self._write(
             self._ID_ON_OFF_MODE, "<BHHHH", 
             mode,
             distance_cm,
@@ -117,6 +145,7 @@ class TfLuna:
             delay2_ms,
             resp_format="<bx"
         )
+        logger.debug(f"IRQ: {resp!r}")
 
     async def trigger(self):
         await self._write(self._ID_SAMPLE_TRIG, "", wait_for_resp=False)

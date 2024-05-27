@@ -4,6 +4,7 @@
 import uasyncio
 
 import logging
+logger = logging.getLogger(__name__)
 
 TEST_MODE = 0x0F
 BRIGHTNESS = 0x0A
@@ -98,16 +99,6 @@ class DigitDisplay:
         self.spi.write(bytearray([register, value]))
         self.pin.on()
 
-    async def init(self):
-        self.reset()
-        await uasyncio.sleep(0.1)
-        self.on()
-        await uasyncio.sleep(0.1)
-        self.write("X" * SIZE)
-        await uasyncio.sleep(0.1)
-        self.blank()
-        await uasyncio.sleep(0.1)
-
     def on(self):
         self._write_register(SHUTDOWN, 1)
 
@@ -122,12 +113,11 @@ class DigitDisplay:
         self.on()
 
     def blank(self):
-        self.scroll = False
-
         for i in range(0, SIZE):
             self._write_register(i + 1, 0)
 
     def write(self, text):
+        logger.debug(f"Display: {text}")
         text = text + '        '
         text = text[:8]
         pos = 0

@@ -10,8 +10,8 @@ import uasyncio
 from machine import Pin
 import machine
 from display import DigitDisplay
+from tfluna import TfLuna
 
-from lidar.lidar import LIDAR
 
 logging.basicConfig(level=logging.DEBUG, stream=sys.stdout)
 
@@ -19,12 +19,11 @@ RED_LED = Pin(0, Pin.OUT, Pin.DRIVE_1)
 GREEN_LED = Pin(1, Pin.OUT, Pin.DRIVE_1)
 BLUE_LED = Pin(2, Pin.OUT, Pin.DRIVE_1)
 
-LASER_PIN = Pin(21, Pin.IN)
+LIDAR_TRIGGER = Pin(10, Pin.IN)
+LIDAR_UART = machine.UART(1, tx=8, rx=9, baudrate=115200)
 
-DISPLAY_SELECT = Pin(10, Pin.OUT)
+DISPLAY_SELECT = Pin(21, Pin.OUT)
 SPI = machine.SPI(1, 10_000, sck=Pin(4), mosi=Pin(6), miso=Pin(5))
-I2C = machine.I2C(0, scl=Pin(9), sda=Pin(8))
-LIDAR_ADDR = 0x10
 
 MAC = net.get_mac()
 
@@ -68,10 +67,13 @@ class Tripwire:
         self.pin.irq(self._trigger, trigger=trigger)
 
     def _trigger(self, pin):
+        print(f"IRQ, P:{pin}")
         self.flag.set()
 
     async def wait(self, ensure_ms=1):
         flag = self.flag
+        flag.clear()
+
         while True:
             await flag.wait()
             trip_time = time.ticks_ms()
@@ -82,60 +84,30 @@ class Tripwire:
                 return trip_time
 
 
-
-import struct
-
-class Lidar:
-    def __init__(self, uart: machine.UART):
-        self._uart = uart
-
-    def _write(self, cmd: int, format: str, *nums):
-        msg = struct.pack(format+'x', *nums)
-        self._uart.write(
-            struct.pack("<bb", cmd, len(msg) + 2)
-        )
-        self._uart.write(msg)
-
-    def enable_output(self, on: bool = True):
-        self._write(0x07, int(on).to_bytes())
-
-    IRQ_MODE_DISABLE = 0x00
-    IRQ_MODE_HIGH = 0x01
-    IRQ_MODE_LOW = 0x02
-
-    def irq_mode(self, mode: int, distance_cm: int, zone_cm: int, delay1_ms: int, delay2_ms: int):
-        self._write(
-            0x3b,
-            mode.to_bytes(1, "little") +
-            distance_cm.to_bytes(2, "little") +
-            zone_cm.to_bytes(2, "little") +
-            delay1_ms.to_bytes(2, "little") +
-            delay2_ms.to_byte2(2, "little")
-        )
-
-
 @state
-async def Init(display, **_):
+async def Init(**_):
     RED_LED.off()
     GREEN_LED.off()
     BLUE_LED.off()
-    display.write("BOOT")
-    return InitLidar, (), {}
+    display = DigitDisplay(SPI, DISPLAY_SELECT)
+    display.write("Boot")
+
+    await uasyncio.sleep(0.5)
+    return InitLidar, (), {"display": display}
 
 
 @state
-async def InitLidar(**_):
+async def InitLidar(display, **_):
+    display.write("LIDAR")
 
-    slaves = set()
+    lidar = TfLuna(LIDAR_UART)
+    lidar.soft_reset()
+    lidar.set_output_frequency(1)
+    tripwire = Tripwire(LIDAR_TRIGGER)
+    tripwire.set_irq(Pin.IRQ_RISING)
 
-    while LIDAR_ADDR not in slaves:
-        slaves = I2C.scan()
+    while lidar.distance is None:
         await uasyncio.sleep(0.5)
-
-    lidar = LIDAR(I2C, LIDAR_ADDR)
-    lidar.set_frequency(250)
-
-    tripwire = Tripwire(LASER_PIN)
 
     return InitNet, (), {"lidar": lidar, "tripwire": tripwire}
 
@@ -145,21 +117,23 @@ async def InitNet(display, **_):
     mqtt = net.configure_mqtt()
     
     if isinstance(mqtt, net.NullMQTT):
-        display.write("NET ERR")
+        display.write("Net Err")
         await uasyncio.sleep(5)
 
     return Calibrate, (), {"mqtt": mqtt}
 
 
 @state
-async def Calibrate(lidar, mqtt, **_):
+async def Calibrate(lidar: TfLuna, display, mqtt, **_):
     await message(mqtt, 'calibrating')
     counts = 10
-    await uasyncio.sleep_ms(100)
+
+    await lidar.set_output_frequency(2)
+    lidar.start()
 
     pins = (RED_LED, GREEN_LED)
 
-    distance = lidar.distance()
+    distance = lidar.distance
     
     while counts > 0:
         pins[0].off()
@@ -167,32 +141,31 @@ async def Calibrate(lidar, mqtt, **_):
         pins = (pins[1], pins[0])
         await uasyncio.sleep(0.5)
 
-        new_distance = lidar.distance()
+        new_distance = lidar.distance
+        display.write(f"D {new_distance}")
         logging.debug(f"Orig: {distance} New: {new_distance}")
         if abs(new_distance - distance) <= 5 and distance > 30:
             counts -= 1
         else:
             counts = 10
+            display.write("Error")
             distance = new_distance
 
-    return Ready, (), {"trigger_distance": distance}
+    await lidar.irq_mode(lidar.IRQ_MODE_HIGH, distance - 10, 5, 1, 10)
+    await lidar.set_output_frequency(100)
+    lidar.stop()
+    return Ready, (), {}
 
 
 @state
-async def Ready(mqtt, lidar: LIDAR, trigger_distance, **_):
+async def Ready(mqtt, lidar: TfLuna, tripwire: Tripwire, **_):
     RED_LED.off()
     GREEN_LED.on()
 
     lap_id = rand_str()
     await message(mqtt, 'ready', lap_id=lap_id)
 
-    while True:
-        distance = lidar.distance()
-        if (distance + 5) < trigger_distance:
-            break
-        await uasyncio.sleep_ms(1)
-
-    start_time = time.ticks_ms()
+    start_time = await tripwire.wait()
     return Lap, (lap_id, start_time), {}
 
 
@@ -201,6 +174,7 @@ def ms_to_time(ms):
 
 
 async def _lap_tick(mqtt, lap_id, start_time):
+    logging.debug("Lap Tick Start")
     try:
         while True:
             await uasyncio.sleep(1.5)
@@ -215,6 +189,7 @@ async def _lap_tick(mqtt, lap_id, start_time):
 
 
 async def _timer_tick(d, start_time):
+    logging.debug("Timer Tick Start")
     try:
         while True:
             await uasyncio.sleep(0.321)
@@ -225,10 +200,11 @@ async def _timer_tick(d, start_time):
 
 
 @state
-async def Lap(lap_id, start_time, *, trigger_distance, lidar, mqtt, display, **_):
+async def Lap(lap_id, start_time, *, tripwire: Tripwire, lidar, mqtt, display, **_):
     RED_LED.on()
     GREEN_LED.on()
 
+    lidar.stop()
     task = uasyncio.create_task(_lap_tick(mqtt, lap_id, start_time))
     task2 = uasyncio.create_task(_timer_tick(display, start_time))
 
@@ -239,17 +215,7 @@ async def Lap(lap_id, start_time, *, trigger_distance, lidar, mqtt, display, **_
         logging.debug("Debounce block ended")
         GREEN_LED.off()
 
-        while True:
-            distance = lidar.distance()
-            if (distance + 5) < trigger_distance:
-                break
-
-            await uasyncio.sleep_ms(1)
-
-
-        await uasyncio.sleep(5)
-        end_time = time.ticks_ms()
-
+        end_time = await tripwire.wait()
     finally:
         task.cancel()
         task2.cancel()
@@ -274,7 +240,6 @@ async def EndLap(lap_id, start_time, end_time, *, display, mqtt, **_):
 
 async def statemachine(next_state, *args, **kwargs):
     state = next_state(*args, **kwargs)
-
     while True:
         next_state, args, new_kwargs = await state
         kwargs.update(new_kwargs)
@@ -283,18 +248,16 @@ async def statemachine(next_state, *args, **kwargs):
 
 
 async def main():
-    display = DigitDisplay(SPI, DISPLAY_SELECT)
-    await display.init()
     
     gc.collect()
 
     try:
         await uasyncio.gather(
-            statemachine(Init, display=display),
+            statemachine(Init),
         )
     except:
-        display.write("ERR")
         raise
+
 
 
 def run():
