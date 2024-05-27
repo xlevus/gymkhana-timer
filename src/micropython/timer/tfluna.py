@@ -31,13 +31,6 @@ class TfLuna:
         self._cmdset = uasyncio.Event()
         self._cmdresult = None
 
-    async def __aenter__(self):
-        self.start()
-        return self
-
-    async def __aexit__(self, _, __, ___):
-        self.stop()
-
     async def _write(self, command: int, format: str, *values, resp_format=None):
         await self._cmdlock.acquire()
         try:
@@ -58,50 +51,38 @@ class TfLuna:
             self._cmdresult = None
 
     async def _run(self):
-        try:
-            await uasyncio.wait_for_ms(self._running.acquire(), 1)
-            logger.debug("Lock Acquired")
-            try:
-                await self.__run()
-            finally:
-                self._running.release()
-                logger.debug("Releasing Lock")
-        except uasyncio.TimeoutError:
-            logger.debug("Already Running")
-            pass
+        async with self._running.acquire():
+            await self._sreader.drain()
+            while not self._die.is_set():
+                header = await self._sreader.read(2)
 
-    async def __run(self):
-        await self._sreader.drain()
-        while not self._die.is_set():
-            header = await self._sreader.read(2)
+                if header is None:
+                    await uasyncio.sleep(0)
+                    continue
 
-            if header is None:
-                await uasyncio.sleep(0)
-                continue
+                elif header == b'YY':
+                    try:
+                        self.distance, self.amplitude, temp = struct.unpack("<HHHx", await self._sreader.read(7))
+                        self.temp = temp/8 - 256
+                    except ValueError:
+                        pass
 
-            elif header == b'YY':
-                try:
-                    self.distance, self.amplitude, temp = struct.unpack("<HHHx", await self._sreader.read(7))
-                    self.temp = temp/8 - 256
-                except ValueError:
-                    pass
+                elif header[0] == self._CMD_HEADER:
+                    data = await self._sreader.read(header[1] - 2)
+                    self._cmdresult = data
+                    self._cmdset.set()
 
-            elif header[0] == self._CMD_HEADER:
-                data = await self._sreader.read(header[1] - 2)
-                self._cmdresult = data
-                self._cmdset.set()
+                else:
+                    logger.debug(f"Wat? {header!r}")
 
-            else:
-                logger.debug(f"Wat? {header!r}")
-
-        logger.debug("Run DIE")
-
-    def start(self):
-        self._die.clear()
-        uasyncio.create_task(self._run())
+    async def start(self):
+        if not self._running.locked():
+            uasyncio.create_task(self._run())
     
-    def stop(self):
+    async def stop(self):
         self._die.set()
+        async with self._running:
+            pass
 
     async def output_enable(self, enable: bool = True):
         await self._write(
@@ -110,7 +91,7 @@ class TfLuna:
 
     async def soft_reset(self):
         logger.debug("Soft Reset")
-        await self._write(self._ID_SOFT_RESET, "", wait_for_resp=False)
+        await self._write(self._ID_SOFT_RESET, "")
 
     async def set_output_frequency(self, frequency_hz: int):
         logger.debug(f"Setting Output Frequency to : {frequency_hz}")
@@ -163,18 +144,19 @@ class TfLuna:
 async def _test(uart):
     tf = TfLuna(uart)
 
-    await uasyncio.sleep(1)
-
-    print("Version: ", await tf.get_version())
-    await tf.set_output_frequency(100)
-
-    await tf.irq_mode(tf.IRQ_MODE_HIGH, 60, 10, 10, 10)
-    import machine
-    x = machine.Pin(10, machine.Pin.IN)
-
-    while True:
-        print(f"Distance: {tf.distance}  X:{x.value()}")
+    async with tf:
         await uasyncio.sleep(1)
+
+        print("Version: ", await tf.get_version())
+        await tf.set_output_frequency(100)
+
+        await tf.irq_mode(tf.IRQ_MODE_HIGH, 60, 10, 10, 10)
+        import machine
+        x = machine.Pin(10, machine.Pin.IN)
+
+        while True:
+            print(f"Distance: {tf.distance}  X:{x.value()}")
+            await uasyncio.sleep(1)
 
 
 def test(uart):

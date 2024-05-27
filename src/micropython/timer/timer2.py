@@ -67,7 +67,6 @@ class Tripwire:
         self.pin.irq(self._trigger, trigger=trigger)
 
     def _trigger(self, pin):
-        print(f"IRQ, P:{pin}")
         self.flag.set()
 
     async def wait(self, ensure_ms=1):
@@ -90,6 +89,7 @@ async def Init(**_):
     GREEN_LED.off()
     BLUE_LED.off()
     display = DigitDisplay(SPI, DISPLAY_SELECT)
+    display.reset()
     display.write("Boot")
 
     await uasyncio.sleep(0.5)
@@ -101,13 +101,16 @@ async def InitLidar(display, **_):
     display.write("LIDAR")
 
     lidar = TfLuna(LIDAR_UART)
-    lidar.soft_reset()
-    lidar.set_output_frequency(1)
-    tripwire = Tripwire(LIDAR_TRIGGER)
-    tripwire.set_irq(Pin.IRQ_RISING)
+    await lidar.start()
+
+    await lidar.soft_reset()
+    await lidar.set_output_frequency(1)
 
     while lidar.distance is None:
         await uasyncio.sleep(0.5)
+        
+    tripwire = Tripwire(LIDAR_TRIGGER)
+    tripwire.set_irq(Pin.IRQ_RISING)
 
     return InitNet, (), {"lidar": lidar, "tripwire": tripwire}
 
@@ -128,32 +131,32 @@ async def Calibrate(lidar: TfLuna, display, mqtt, **_):
     await message(mqtt, 'calibrating')
     counts = 10
 
-    await lidar.set_output_frequency(2)
-    lidar.start()
+    async with lidar:
+        await lidar.set_output_frequency(2)
 
-    pins = (RED_LED, GREEN_LED)
+        pins = (RED_LED, GREEN_LED)
 
-    distance = lidar.distance
-    
-    while counts > 0:
-        pins[0].off()
-        pins[1].on()
-        pins = (pins[1], pins[0])
-        await uasyncio.sleep(0.5)
+        distance = lidar.distance
+        
+        while counts > 0:
+            pins[0].off()
+            pins[1].on()
+            pins = (pins[1], pins[0])
+            await uasyncio.sleep(0.5)
 
-        new_distance = lidar.distance
-        display.write(f"D {new_distance}")
-        logging.debug(f"Orig: {distance} New: {new_distance}")
-        if abs(new_distance - distance) <= 5 and distance > 30:
-            counts -= 1
-        else:
-            counts = 10
-            display.write("Error")
-            distance = new_distance
+            new_distance = lidar.distance
+            display.write(f"D {new_distance}")
+            logging.debug(f"Orig: {distance} New: {new_distance}")
+            if abs(new_distance - distance) <= 5 and distance > 30:
+                counts -= 1
+            else:
+                counts = 10
+                display.write("Error")
+                distance = new_distance
 
-    await lidar.irq_mode(lidar.IRQ_MODE_HIGH, distance - 10, 5, 1, 10)
-    await lidar.set_output_frequency(100)
-    lidar.stop()
+        await lidar.irq_mode(lidar.IRQ_MODE_HIGH, distance - 10, 5, 1, 10)
+        await lidar.set_output_frequency(100)
+
     return Ready, (), {}
 
 
