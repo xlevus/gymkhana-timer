@@ -24,14 +24,18 @@ class TfLuna:
         self.amplitude = None
         self.temp = None
 
-        self._die = uasyncio.Event()
         self._running = uasyncio.Lock()
+        self._ready = uasyncio.Event()
 
         self._cmdlock = uasyncio.Lock() 
         self._cmdset = uasyncio.Event()
         self._cmdresult = None
 
     async def _write(self, command: int, format: str, *values, resp_format=None):
+        if self._runtask is None:
+            raise RuntimeError("Use inside a `async with TFLuna` block")
+
+        await self._ready.wait()
         await self._cmdlock.acquire()
         try:
             self._cmdset.clear()
@@ -39,7 +43,6 @@ class TfLuna:
             header = struct.pack("<bbb", self._CMD_HEADER, len(msg) + 3, command)
             await self._sreader.awrite(header+msg)
             if resp_format:
-                logger.debug("Awaiting Response")
                 await self._cmdset.wait()
                 resp_command, *resp_data = self._cmdresult
                 if resp_command != command:
@@ -51,9 +54,9 @@ class TfLuna:
             self._cmdresult = None
 
     async def _run(self):
-        async with self._running.acquire():
-            await self._sreader.drain()
-            while not self._die.is_set():
+        try:
+            self._ready.clear()
+            while True:
                 header = await self._sreader.read(2)
 
                 if header is None:
@@ -64,8 +67,9 @@ class TfLuna:
                     try:
                         self.distance, self.amplitude, temp = struct.unpack("<HHHx", await self._sreader.read(7))
                         self.temp = temp/8 - 256
+                        self._ready.set()
                     except ValueError:
-                        pass
+                        continue
 
                 elif header[0] == self._CMD_HEADER:
                     data = await self._sreader.read(header[1] - 2)
@@ -74,15 +78,20 @@ class TfLuna:
 
                 else:
                     logger.debug(f"Wat? {header!r}")
+                    continue
 
-    async def start(self):
-        if not self._running.locked():
-            uasyncio.create_task(self._run())
+                await uasyncio.sleep(0)
+        finally:
+            return
+
+    async def __aenter__(self):
+        await self._running.acquire()
+        self._runtask = uasyncio.create_task(self._run())
     
-    async def stop(self):
-        self._die.set()
-        async with self._running:
-            pass
+    async def __aexit__(self, _, __, ___):
+        self._runtask.cancel()
+        self._runtask = None
+        self._running.release()
 
     async def output_enable(self, enable: bool = True):
         await self._write(
@@ -145,8 +154,6 @@ async def _test(uart):
     tf = TfLuna(uart)
 
     async with tf:
-        await uasyncio.sleep(1)
-
         print("Version: ", await tf.get_version())
         await tf.set_output_frequency(100)
 
