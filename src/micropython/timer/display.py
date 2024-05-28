@@ -125,5 +125,8 @@ class DigitDisplay:
         while text:
             char, *text = text
             data = DIGITS.get(char, 0)
+            if text and text[0] == '.':
+                _, *text = text
+                data = data | 128
             self._write_register(8 - pos, data)
             pos += 1
