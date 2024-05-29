@@ -1,5 +1,5 @@
 import logging
-import uasyncio
+import asyncio
 import struct
 
 logger = logging.getLogger(__name__)
@@ -18,17 +18,17 @@ class TfLuna:
 
     def __init__(self, uart):
         self._uart = uart
-        self._sreader = uasyncio.StreamReader(self._uart)
+        self._sreader = asyncio.StreamReader(self._uart)
 
         self.distance = None
         self.amplitude = None
         self.temp = None
 
-        self._running = uasyncio.Lock()
-        self._ready = uasyncio.Event()
+        self._running = asyncio.Lock()
+        self._ready = asyncio.Event()
 
-        self._cmdlock = uasyncio.Lock() 
-        self._cmdset = uasyncio.Event()
+        self._cmdlock = asyncio.Lock() 
+        self._cmdset = asyncio.Event()
         self._cmdresult = None
 
     async def _write(self, command: int, format: str, *values, resp_format=None):
@@ -60,7 +60,7 @@ class TfLuna:
                 header = await self._sreader.read(2)
 
                 if header is None:
-                    await uasyncio.sleep(0)
+                    await asyncio.sleep(0)
                     continue
 
                 elif header == b'YY':
@@ -80,13 +80,13 @@ class TfLuna:
                     logger.debug(f"Wat? {header!r}")
                     continue
 
-                await uasyncio.sleep(0)
+                await asyncio.sleep(0)
         finally:
             return
 
     async def __aenter__(self):
         await self._running.acquire()
-        self._runtask = uasyncio.create_task(self._run())
+        self._runtask = asyncio.create_task(self._run())
     
     async def __aexit__(self, _, __, ___):
         self._runtask.cancel()
@@ -142,34 +142,3 @@ class TfLuna:
 
     async def get_version(self):
         return await self._write(self._ID_GET_VERSION, "", resp_format="<bbbx")
-
-
-# if __name__ == '__main__':
-#     tf = TfLuna(uart)
-#     tf.soft_reset()
-#     tf.output_enable(True)
-#     tf.set_frequency(0)
-
-async def _test(uart):
-    tf = TfLuna(uart)
-
-    async with tf:
-        print("Version: ", await tf.get_version())
-        await tf.set_output_frequency(100)
-
-        await tf.irq_mode(tf.IRQ_MODE_HIGH, 60, 10, 10, 10)
-        import machine
-        x = machine.Pin(10, machine.Pin.IN)
-
-        while True:
-            print(f"Distance: {tf.distance}  X:{x.value()}")
-            await uasyncio.sleep(1)
-
-
-def test(uart):
-    import logging
-    logging.basicConfig(level=logging.DEBUG)
-    import machine
-    uart = uart or machine.UART(1, tx=8, rx=9, baudrate=115200)
-    uasyncio.run(_test(uart))
-    return uart

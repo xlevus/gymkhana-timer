@@ -1,3 +1,4 @@
-from timer2 import run
+from timer import run, RESET_BUTTON
 
-# run()
+if RESET_BUTTON.value():
+    run()

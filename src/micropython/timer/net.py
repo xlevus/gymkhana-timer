@@ -2,8 +2,11 @@ import mqtt_as
 import json
 import network
 import ubinascii
+import asyncio
 
 import logging
+
+from utils import rand_str
 
 
 class NullMQTT:
@@ -22,6 +25,9 @@ def configure_mqtt():
 
     wlan = network.WLAN(network.STA_IF)
     wlan.active(True)
+
+    mqtt_as.MQTTClient.DEBUG = True
+    mqtt_as.config['queue_len'] = 1
 
     try:
         defined_networks = json.load(open("wifi.json", "r"))
@@ -46,4 +52,19 @@ def get_mac():
     wlan = network.WLAN(network.STA_IF)
     wlan.active(True)
     return ubinascii.hexlify(wlan.config('mac')).decode()
-    
+
+
+MAC = get_mac()
+
+
+async def message(mqtt, event: str, *, qos: int=1, **kwargs):
+    msg = json.dumps(dict(
+        event=event,
+        device_id=MAC,
+        msgid=rand_str(),
+        **kwargs
+    )) 
+    logging.debug(msg)
+    asyncio.create_task(mqtt.publish("gk-timer", msg, qos=qos))
+    return
+
