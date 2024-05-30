@@ -1,6 +1,6 @@
 import asyncio
 import machine
-from .driver import TfLuna
+from .tfluna import TfLuna
     
 import logging
 logging.basicConfig(level=logging.DEBUG)
