@@ -20,7 +20,7 @@ GREEN_LED = machine.Pin(1, machine.Pin.OUT, machine.Pin.DRIVE_1)
 BLUE_LED = machine.Pin(2, machine.Pin.OUT, machine.Pin.DRIVE_1)
 
 LIDAR_TRIGGER = machine.Pin(10, machine.Pin.IN)
-LIDAR_UART = machine.UART(1, tx=8, rx=9, baudrate=115200)
+LIDAR_UART = machine.UART(1, tx=9, rx=8, baudrate=115200)
 
 DISPLAY_SELECT = machine.Pin(21, machine.Pin.OUT)
 SPI = machine.SPI(1, 10_000, sck=machine.Pin(4), mosi=machine.Pin(6), miso=machine.Pin(5))
@@ -176,7 +176,7 @@ async def Lap(lap_id, start_time, *, tripwire: Button, lidar, mqtt, display, res
         logging.debug("Debounce block ended")
         GREEN_LED.off()
 
-        end_time = tripwire.wait()
+        end_time = await tripwire.wait()
 
         return EndLap, (lap_id, start_time, end_time), {}
     finally:
@@ -185,15 +185,11 @@ async def Lap(lap_id, start_time, *, tripwire: Button, lidar, mqtt, display, res
 
 
 @state
-async def DNF(lap_id, *, display, mqtt, **_):
-    display.write("DNF")
-    await net.message(mqtt, "dnf", lap_id=lap_id)
-    await uasyncio.sleep(5)
-    return Calibrate, (), {}
-
-
-@state
 async def EndLap(lap_id, start_time, end_time, *, display, mqtt, **_):
+    RED_LED.off()
+    GREEN_LED.off()
+    BLUE_LED.on()
+
     duration = time.ticks_diff(end_time, start_time)
     display.write(ms_to_time(duration))
     logging.info(f"LAP: {duration} (S:{start_time} E:{end_time})")
