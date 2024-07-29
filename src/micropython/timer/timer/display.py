@@ -3,7 +3,8 @@
 
 import uasyncio
 
-from . import logging
+import logging
+logger = logging.getLogger(__name__)
 
 TEST_MODE = 0x0F
 BRIGHTNESS = 0x0A
@@ -79,6 +80,7 @@ DIGITS = {
     "Y": 59,
     "Z": 109,
     ",": 128,
+    ":": 129,
     ".": 128,
     "!": 176,
 }
@@ -92,27 +94,10 @@ class DigitDisplay:
         self.spi = spi
         self.pin = pin
 
-        self.text = ""
-        self.pointer = 0
-        self.scroll = False
-
-        self.task = None
-        self.lock = uasyncio.Lock()
-
     def _write_register(self, register, value):
         self.pin.off()
         self.spi.write(bytearray([register, value]))
         self.pin.on()
-
-    async def init(self):
-        self.reset()
-        await uasyncio.sleep(0.1)
-        self.on()
-        await uasyncio.sleep(0.1)
-        self.write("X" * SIZE)
-        await uasyncio.sleep(0.1)
-        self.blank()
-        await uasyncio.sleep(0.1)
 
     def on(self):
         self._write_register(SHUTDOWN, 1)
@@ -128,44 +113,20 @@ class DigitDisplay:
         self.on()
 
     def blank(self):
-        self.scroll = False
-
         for i in range(0, SIZE):
             self._write_register(i + 1, 0)
 
     def write(self, text):
-        logging.log(logging.DEBUG, text)
-        self.pointer = 0
-        if len(text) > SIZE:
-            self.text = text + " " * LONG_PAD
-            self.scroll = True
-        else:
-            self.text = "{:<8}".format(text)
-            self.scroll = False
+        logger.debug(f"Display: {text}")
+        text = text + '        '
+        text = text[:8]
+        pos = 0
 
-        self.update()
-
-    def update(self):
-        text = ""
-        for i in range(0, SIZE):
-            text_pos = (self.pointer + i) % len(self.text)
-            char = self.text[text_pos]
-            symbol = DIGITS.get(char, 0)
-            self._write_register(8 - i, symbol)
-            text += char
-
-    async def main(self):
-        if self.lock.locked():
-            return
-
-        try:
-            await self.lock.acquire()
-
-            while True:
-                if self.scroll:
-                    self.update()
-                    self.pointer += 1
-
-                await uasyncio.sleep(0.5)
-        finally:
-            self.lock.release()
+        while text:
+            char, *text = text
+            data = DIGITS.get(char, 0)
+            if text and text[0] == '.':
+                _, *text = text
+                data = data | 128
+            self._write_register(8 - pos, data)
+            pos += 1

@@ -7,5 +7,10 @@
         python310
         ansible
         glibcLocales
+        esptool
+        mpy-utils
+        picocom
+        mpremote
+        micropython
     ];
 }
