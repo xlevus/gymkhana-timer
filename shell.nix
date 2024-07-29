@@ -11,5 +11,6 @@
         mpy-utils
         picocom
         mpremote
+        micropython
     ];
 }

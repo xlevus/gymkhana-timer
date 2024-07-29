@@ -118,6 +118,14 @@ async def Calibrate(lidar: TfLuna, display, mqtt, **_):
     return Ready, (), {}
 
 
+async def _ready(display: DigitDisplay):
+    try:
+        while True:
+            await uasyncio.sleep(0.5)
+    except uasyncio.CancelledError:
+        pass
+
+
 @state
 async def Ready(mqtt, lidar: TfLuna, tripwire: Button, display, **_):
     RED_LED.off()
