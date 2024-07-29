@@ -35,6 +35,8 @@ interpreter_constraints = ["CPython==3.10.*"]
 [python-infer]
 string_imports = true
 
+[tailor]
+ignore_paths = ["src/micropython/**"]
 
 [docker.registries.ghcr]
 address = "ghcr.io/xlevus/gymkhana"
