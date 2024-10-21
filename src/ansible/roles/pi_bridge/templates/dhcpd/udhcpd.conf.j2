@@ -1,0 +1,3 @@
+interface {{ hotspot_interface }}
+start     {{ hotspot_net | ansible.utils.nthhost('10') }}
+end       {{ hotspot_net | ansible.utils.nthhost('-1') }}

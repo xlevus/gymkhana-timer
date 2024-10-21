@@ -1,0 +1,7 @@
+---
+- name: Pi Bridge
+  become: true
+  hosts: 
+   - pi_bridge
+  roles:
+   - pi_bridge
