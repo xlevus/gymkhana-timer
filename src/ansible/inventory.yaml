@@ -2,3 +2,7 @@ webservers:
   hosts:
     srv501663.hstgr.cloud:
       ansible_user: root
+
+mosquitto:
+  children:
+    webservers:
