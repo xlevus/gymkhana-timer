@@ -5,4 +5,12 @@ python_requirements(
         "django-allauth": ["allauth"],
         "django-simple-menu": ["simple_menu"],
     },
+    overrides={
+        "django-allauth": {
+            "dependencies": [
+                ":requirements.txt#requests",
+                ":requirements.txt#jwt"
+            ],
+        }
+    }
 )
