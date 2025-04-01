@@ -3,6 +3,11 @@
   ansible.builtin.apt:
     name: mosquitto
 
+- name: Persistence Location
+  ansible.builtin.file:
+    path: /var/gk
+    state: directory
+
 - name: Mosquitto Configuration
   ansible.builtin.template:
     src: mosquitto/bridge.conf.j2

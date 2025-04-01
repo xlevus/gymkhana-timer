@@ -1,4 +1,7 @@
 ---
+- name: Set Hostname
+  ansible.builtin.hostname:
+    name: "{{ hostname }}"
 
 - name: Install networking packages
   ansible.builtin.apt:
@@ -6,11 +9,18 @@
     pkg: 
      - ufw
      - udhcpd
+     - ipheth-utils
 
 - name: uDHCPd configuration
   ansible.builtin.template:
     src: dhcpd/udhcpd.conf.j2
     dest: /etc/udhcpd.conf
+
+- name: Enable uDHCPd
+  ansible.builtin.lineinfile:
+    path: /etc/default/udhcpd
+    regexp: '^DHCPD_ENABLED='
+    line: DHCPD_ENABLED="yes"
 
 - name: Start uDHCPd
   ansible.builtin.systemd_service:
@@ -21,7 +31,7 @@
 - name: Enable Wifi Hotspot
   community.general.nmcli:
     type: wifi
-    conn_name: "{{ hotspot_ssid }}_ap"
+    conn_name: "{{ hotspot_ssid }} Access Point"
     ifname: "{{ hotspot_interface }}"
     ssid: "{{ hotspot_ssid }}"
     ip4: "{{ hotspot_net | ansible.utils.ipaddr('net') | ansible.utils.ipaddr('1') }}"
