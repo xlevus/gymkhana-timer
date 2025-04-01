@@ -30,7 +30,7 @@ enabled = false
 
 [python]
 enable_resolves = true
-interpreter_constraints = ["CPython==3.10.*"]
+interpreter_constraints = ["CPython==3.12.*"]
 
 [python-infer]
 string_imports = true

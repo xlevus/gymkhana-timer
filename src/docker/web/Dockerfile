@@ -1,11 +1,11 @@
-FROM python:3.10-slim AS static
+FROM python:3.12-slim AS static
 
 ENV STATIC_ROOT=/data/static
 
 COPY src.python.gk.web/manage.pex /manage.pex
 RUN mkdir -p $STATIC_ROOT && /manage.pex collectstatic --no-input
 
-FROM python:3.10-slim
+FROM python:3.12-slim
 
 EXPOSE 8080
 

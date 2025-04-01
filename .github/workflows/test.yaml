@@ -16,12 +16,6 @@ jobs:
       - name: Check out repository code
         uses: actions/checkout@v4
 
-      - name: Install python version
-        uses: gabrielfalcao/pyenv-action@v18
-        with:
-          default: "3.10"
-          versions: "3.10"
-
       - name: Initialize Pants
         uses: pantsbuild/actions/init-pants@main
         with:
