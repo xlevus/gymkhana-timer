@@ -1,0 +1,35 @@
+---
+- name: Mosquitto Directory
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: 0700
+  with_items: 
+    - /etc/mosquitto
+
+- name: Mosquitto Config
+  ansible.builtin.copy: 
+    src: "{{ item }}"
+    dest: "/etc/mosquitto/{{ item }}"
+  with_items:
+    - mosquitto.conf
+    - passwd
+
+- name: Mosquitto Passwords
+  community.docker.docker_container:
+    name: mqtt-passwd
+    image: eclipse-mosquitto:latest
+    detach: false
+    command: "mosquitto_passwd -b /mosquitto/config/passwd {{ item.key }} {{ item.value }}"
+    volumes:
+      - "/etc/mosquitto/passwd:/mosquitto/config/passwd"
+  no_log: true
+  loop: "{{ mosquitto_users|dict2items }}"
+    
+- name: Run Mosquitto
+  community.docker.docker_container:
+    name: mqtt
+    image: eclipse-mosquitto:latest
+    volumes:
+      - "/etc/mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.config"
+      - "/etc/mosquitto/passwd:/mosquitto/config/passwd"

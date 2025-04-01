@@ -1,0 +1,5 @@
+listener 1883 {{ hotspot_net | ansible.utils.ipaddr('net') | ansible.utils.nthhost(1)  }}
+
+persistence true
+
+allow_anonymous true

@@ -2,7 +2,26 @@ webservers:
   hosts:
     srv501663.hstgr.cloud:
       ansible_user: root
+      hostnames:
+        - leaderboard.coneheads.org
+        - srv501663.hstgr.cloud
 
-mosquitto:
-  children:
-    webservers:
+  vars:
+    mosquitto_users:
+      gymkhana: !vault |
+        $ANSIBLE_VAULT;1.1;AES256
+        64343437653430373430303264633266303333656437636330346538333039363332313639356266
+        6165393664646332303062343464653238616634353733340a363832633936383639396234303366
+        63636362393437653834383564396136386337366362383066633864396131323564346436346365
+        3130313466383865390a656231626331633835616530663234353739613731343935363062393164
+        37623366643835333531393434666432623365666536393164363363646533386666
+
+
+pi_bridge:
+  hosts:
+    10.0.0.122:
+      hostname: gk
+      hotspot_net: 10.91.0.0/24
+      hotspot_interface: wlan0
+      hotspot_ssid: gk
+      hotspot_password: lets-race
