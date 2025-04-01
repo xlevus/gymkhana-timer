@@ -4,7 +4,7 @@
     nativeBuildInputs = with pkgs.buildPackages; [
         flyctl
         #docker
-        python310
+        python312
         ansible
         glibcLocales
         esptool

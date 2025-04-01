@@ -8,3 +8,5 @@ django-allauth
 django-simple-menu
 whitenoise
 Pillow
+requests
+jwt

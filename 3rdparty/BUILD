@@ -3,6 +3,11 @@ python_requirements(
     module_mapping={
         "django-environ": ["environ"],
         "django-allauth": ["allauth"],
-        "django-simple-menu": ["simple_menu"],
+        "django-simple-menu": ["simple_menu", "menu"],
+    },
+    overrides={
+        "django-allauth": {
+            "dependencies": [":requirements.txt#requests", ":requirements.txt#jwt"],
+        }
     },
 )
