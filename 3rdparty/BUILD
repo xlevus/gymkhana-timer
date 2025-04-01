@@ -7,10 +7,7 @@ python_requirements(
     },
     overrides={
         "django-allauth": {
-            "dependencies": [
-                ":requirements.txt#requests",
-                ":requirements.txt#jwt"
-            ],
+            "dependencies": [":requirements.txt#requests", ":requirements.txt#jwt"],
         }
-    }
+    },
 )
